@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/memberView"
+        layout="@layout/member_identification_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/default_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        layout="@layout/nav_buttons"
+        android:id="@+id/navButtonHolder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/navButtonHolder"
+        android:layout_below="@id/memberView">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin"
+            app:contentPadding="@dimen/default_margin">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/shareIcon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:contentDescription="@string/shares"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/share" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/tab_indicator_height"
+                    android:text="@string/savings"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@id/shareIcon"
+                    app:layout_constraintStart_toEndOf="@id/shareIcon"
+                    app:layout_constraintTop_toTopOf="@id/shareIcon" />
+
+                <View
+                    android:id="@+id/shareSeparator"
+                    style="@style/Divider"
+                    android:layout_marginTop="@dimen/tab_indicator_height"
+                    android:layout_marginBottom="@dimen/small_margin"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/shareIcon" />
+
+                <TextView
+                    android:id="@+id/totalShareTitle"
+                    style="@style/SummaryLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small_margin"
+                    android:layout_weight="3"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="@dimen/tab_indicator_height"
+                    android:text="@string/total_shares_saved"
+                    app:layout_constraintEnd_toStartOf="@id/totalSharesSaved"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/shareSeparator" />
+
+                <TextView
+                    android:id="@+id/totalSharesSaved"
+                    style="@style/SummaryValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:gravity="end"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/totalShareTitle"
+                    app:layout_constraintTop_toTopOf="@id/totalShareTitle"
+                    tools:text="37" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/shareCountView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="totalSharesSaved,totalShareTitle" />
+
+                <TextView
+                    android:id="@+id/totalValueSharesTitle"
+                    style="@style/SummaryLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="@dimen/tab_indicator_height"
+                    android:text="@string/total_value_of_shares"
+                    app:layout_constraintEnd_toStartOf="@id/totalValueShares"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/totalShareTitle" />
+
+                <TextView
+                    android:id="@+id/totalValueShares"
+                    style="@style/SummaryValue"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="end|bottom"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/totalValueSharesTitle"
+                    app:layout_constraintTop_toTopOf="@id/totalValueSharesTitle"
+                    tools:text="TZS 25,000.00" />
+
+                <TextView
+                    android:id="@+id/totalPersonalSavingTitle"
+                    style="@style/SummaryLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="@dimen/tab_indicator_height"
+                    android:text="@string/total_personal_savings"
+                    app:layout_constraintEnd_toStartOf="@id/totalPersonalSaving"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/totalValueSharesTitle" />
+
+                <TextView
+                    android:id="@+id/totalPersonalSaving"
+                    style="@style/SummaryValue"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="end|bottom"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/totalPersonalSavingTitle"
+                    app:layout_constraintTop_toTopOf="@id/totalPersonalSavingTitle"
+                    tools:text="TZS 25,000.00" />
+
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/personalSavingsGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="totalPersonalSaving,totalPersonalSavingTitle" />
+
+                <TextView
+                    android:id="@+id/outstandingTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/tab_indicator_height"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:text="@string/amount_outstanding"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/totalPersonalSavingTitle" />
+
+                <View
+                    android:id="@+id/outstandingDivider"
+                    style="@style/Divider"
+                    android:layout_marginTop="@dimen/tab_indicator_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/outstandingTitle" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/outstandingGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="outstandingDivider,outstandingTitle" />
+
+                <TextView
+                    android:id="@+id/meetingDueAmountTitle"
+                    style="@style/SummaryLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small_margin"
+                    android:layout_weight="3"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="@dimen/tab_indicator_height"
+                    android:text="@string/meeting_dues_caption"
+                    app:layout_constraintEnd_toStartOf="@id/meetingDueAmount"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/outstandingDivider"
+                    app:layout_goneMarginTop="@dimen/small_margin" />
+
+                <TextView
+                    android:id="@+id/meetingDueAmount"
+                    style="@style/SummaryValue"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="end|bottom"
+                    android:textColor="@color/withdrawalColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/meetingDueAmountTitle"
+                    app:layout_constraintTop_toTopOf="@id/meetingDueAmountTitle"
+                    tools:text="TZS 25,000.00" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/meetingDuesGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="meetingDueAmountTitle,meetingDueAmount" />
+
+                <TextView
+                    android:id="@+id/outstandingLoansAmountTitle"
+                    style="@style/SummaryLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="@dimen/tab_indicator_height"
+                    android:text="@string/outstanding_loans"
+                    app:layout_constraintEnd_toStartOf="@id/outstandingLoansAmount"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/meetingDueAmountTitle" />
+
+                <TextView
+                    android:id="@+id/outstandingLoansAmount"
+                    style="@style/SummaryValue"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="end|bottom"
+                    android:textColor="@color/withdrawalColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/outstandingLoansAmountTitle"
+                    app:layout_constraintTop_toTopOf="@id/outstandingLoansAmountTitle"
+                    tools:text="TZS 25,000.00" />
+
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/outstandingLoansGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="outstandingLoansAmountTitle,outstandingLoansAmount" />
+
+                <TextView
+                    android:id="@+id/outstandingFundLoansAmountTitle"
+                    style="@style/SummaryLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="@dimen/tab_indicator_height"
+                    android:text="@string/unpaid_fund_loans"
+                    app:layout_constraintEnd_toStartOf="@id/outstandingFundLoansAmount"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/outstandingLoansAmountTitle" />
+
+                <TextView
+                    android:id="@+id/outstandingFundLoansAmount"
+                    style="@style/SummaryValue"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="end|bottom"
+                    android:textColor="@color/withdrawalColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/outstandingFundLoansAmountTitle"
+                    app:layout_constraintTop_toTopOf="@id/outstandingFundLoansAmountTitle"
+                    tools:text="TZS 25,000.00" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/outstandingFundLoansGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="outstandingFundLoansAmountTitle,outstandingFundLoansAmount" />
+
+                <TextView
+                    android:id="@+id/outstandingFinesAmountTitle"
+                    style="@style/SummaryLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="@dimen/tab_indicator_height"
+                    android:text="@string/outstanding_fines"
+                    app:layout_constraintEnd_toStartOf="@id/outstandingFinesAmount"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/outstandingFundLoansAmountTitle" />
+
+                <TextView
+                    android:id="@+id/outstandingFinesAmount"
+                    style="@style/SummaryValue"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="end|bottom"
+                    android:textColor="@color/withdrawalColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/outstandingFinesAmountTitle"
+                    app:layout_constraintTop_toTopOf="@id/outstandingFinesAmountTitle"
+                    tools:text="TZS 25,000.00" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/outstandingFinesAmountGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="outstandingFinesAmountTitle,outstandingFinesAmount" />
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:background="#f5f5f5"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/tab_indicator_height"
+                    android:paddingTop="@dimen/small_margin"
+                    android:paddingEnd="@dimen/tab_indicator_height"
+                    android:paddingBottom="@dimen/small_margin"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/outstandingFinesAmount">
+
+                    <TextView
+                        style="@style/SummaryLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:text="@string/total_to_be_shared_out"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/totalToBeSharedOut"
+                        style="@style/SummaryValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="end"
+                        android:textSize="14sp"
+                        tools:text="TZS 25,000.00" />
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </ScrollView>
+
+</RelativeLayout>
+
+
+
+List<ConstitutionDetail> loanTier = new ArrayList<>();
+            for (ConstitutionLoanExtra tier : constitution.getConstitutionLoanExtras()) {
+                loanTier.add(new ConstitutionDetail("Tier:" + String.valueOf(tier.getTier()), "Max Amount:" + NumberUtils.formatCurrency(tier.getMaxAmount()) + "  " + "  " + "  Form Fees:" + NumberUtils.formatCurrency(tier.getFormFee())));
+            }
+            constitutionDetails.add(new ConstitutionSummary(R.string.loan_tier_caption, loanTier, ConstitutionSetupActivity.Step.LOANS_TIER, true));

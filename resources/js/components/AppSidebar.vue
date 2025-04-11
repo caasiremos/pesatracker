@@ -14,16 +14,6 @@ const mainNavItems: NavItem[] = [
         href: '/dashboard',
         icon: LayoutGrid,
     },
-    {
-        title: 'Players',
-        href: '/dashboard',
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Games',
-        href: '/dashboard',
-        icon: LayoutGrid,
-    },
 ];
 </script>
 
