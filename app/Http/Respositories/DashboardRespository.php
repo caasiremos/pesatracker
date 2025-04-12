@@ -14,24 +14,24 @@ class DashboardRespository
     {
         return Customer::query()
             ->orderByDesc('created_at')
-            ->get()
-            ->limit(5);
+            ->limit(5)
+            ->get();
     }
 
     public function getScheduledTransaction()
     {
         return ScheduledTransaction::query()
             ->orderByDesc('created_at')
-            ->get()
-            ->limit(5);
+            ->limit(5)
+            ->get();
     }
 
     public function getLatestWalletTransaction()
     {
         return WalletTransaction::query()
             ->orderByDesc('created_at')
-            ->get()
-            ->limit(5);
+            ->limit(5)
+            ->get();
     }
 
     public function userCount()
@@ -49,35 +49,37 @@ class DashboardRespository
         return Feedback::count();
     }
 
-    public function failedScheduledTransaction()
+    public function failedScheduledTransactionCount()
     {
         return ScheduledTransaction::query()
-            ->where('stutus', 'failed')
-            ->get()
+            ->where('transaction_status', 'failed')
             ->count();
     }
 
-    public function failedWalletTransaction()
+    public function failedWalletTransactionCount()
     {
         return WalletTransaction::query()
-            ->where('stutus', 'failed')
-            ->get()
+            ->where('transaction_status', 'failed')
             ->count();
     }
 
-    public function successfulScheduledTransaction()
+    public function successfulScheduledTransactionCount()
     {
         return ScheduledTransaction::query()
-            ->where('stutus', 'completed')
-            ->get()
+            ->where('transaction_status', 'completed')
             ->count();
     }
 
-    public function successfulWalletTransaction()
+    public function successfulWalletTransactionCount()
     {
         return WalletTransaction::query()
-            ->where('stutus', 'completed')
-            ->get()
+            ->where('transaction_status', 'completed')
             ->count();
+    }
+
+    public function getTotalScheduledTransactionSum()
+    {
+        return ScheduledTransaction::query()
+            ->sum('amount');
     }
 }
