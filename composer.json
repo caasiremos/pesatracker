@@ -15,6 +15,7 @@
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
+        "moneyphp/money": "^4.7",
         "tightenco/ziggy": "^2.4"
     },
     "require-dev": {

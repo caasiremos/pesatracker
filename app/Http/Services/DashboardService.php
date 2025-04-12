@@ -3,12 +3,13 @@
 namespace App\Http\Services;
 
 use App\Http\Respositories\DashboardRespository;
+use App\Utils\Money;
 
 class DashboardService
 {
     public function __construct(private DashboardRespository $dashboardRespository) {}
 
-    public function getLatestCustomerRegistration() 
+    public function getLatestCustomerRegistration()
     {
         return $this->dashboardRespository->getLatestCustomerRegistration();
     }
@@ -34,7 +35,7 @@ class DashboardService
             'failedTransactionCount' => $failedTransactionCount,
             'successfulTransactionCount' => $successfulTransactionCount,
             'failedTransactionCount' => $failedTransactionCount,
-            'totalTransactionSum' => $totalTransactionSum
+            'totalTransactionSum' => Money::formatAmount($totalTransactionSum)
         ];
     }
 }

@@ -6,7 +6,6 @@ import { onMounted } from 'vue';
 import { CreditCard, LucideCreditCard, MessageCircle, User, UsersIcon } from 'lucide-vue-next';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Pie } from 'vue-chartjs'
-import { PropType } from 'vue';
 
 const props = defineProps({
     stats: Object,
@@ -35,7 +34,7 @@ const chartData = {
     datasets: [
         {
             backgroundColor: ['#EF4444', '#3CB371'],  // red-500 and green-500 to match your existing color scheme
-            data: [5000, 70000]  // Using your static figures from the dashboard
+            data: [props.stats.failedTransactionCount, props.stats.successfulTransactionCount]  // Using your static figures from the dashboard
         }
     ]
 }
@@ -106,7 +105,7 @@ function listen() {
                                 <LucideCreditCard class="h-8 w-8 text-purple-500 mr-4" />
                                 <div>
                                     <p class="text-sm font-medium text-gray-500">Transactions</p>
-                                    <p class="text-2xl font-semibold text-gray-900">UGX {{ stats.totalTransactionSum }}
+                                    <p class="text-2xl font-semibold text-gray-900">{{ stats.totalTransactionSum }}
                                     </p>
                                 </div>
                             </div>
