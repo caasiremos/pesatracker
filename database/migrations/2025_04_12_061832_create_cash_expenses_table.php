@@ -19,6 +19,11 @@ return new class extends Migration
             $table->dateTime('payment_date');
             $table->string('note')->nullable();
             $table->string('attachment')->nullable();
+            $table->string('provider');
+            $table->string('transaction_phone_number');
+            $table->string('transaction_reference')->nullable();
+            $table->string('transaction_status')->nullable();
+            $table->string('telecom_product')->nullable();
             $table->timestamps();
         });
     }

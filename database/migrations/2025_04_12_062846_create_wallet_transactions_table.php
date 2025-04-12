@@ -14,9 +14,14 @@ return new class extends Migration
         Schema::create('wallet_transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->index()->constrained()->onDelete('cascade');
-            $table->foreignId('walllet_id');
-            $table->foreignId('amount');
-            $table->foreignId('type');
+            $table->foreignId('wallet_id');
+            $table->integer('amount');
+            $table->string('type');
+            $table->string('provider');
+            $table->string('transaction_phone_number');
+            $table->string('transaction_reference')->nullable();
+            $table->string('transaction_status')->nullable();
+            $table->string('telecom_product')->nullable();
             $table->timestamps();
         });
     }
