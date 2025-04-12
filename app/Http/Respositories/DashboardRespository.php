@@ -21,6 +21,7 @@ class DashboardRespository
     public function getScheduledTransaction()
     {
         return ScheduledTransaction::query()
+            ->with('customer')
             ->orderByDesc('created_at')
             ->limit(5)
             ->get();
@@ -29,6 +30,7 @@ class DashboardRespository
     public function getLatestWalletTransaction()
     {
         return WalletTransaction::query()
+            ->with('customer')
             ->orderByDesc('created_at')
             ->limit(5)
             ->get();
@@ -52,6 +54,7 @@ class DashboardRespository
     public function failedScheduledTransactionCount()
     {
         return ScheduledTransaction::query()
+            ->with('customer')
             ->where('transaction_status', 'failed')
             ->count();
     }
@@ -59,6 +62,7 @@ class DashboardRespository
     public function failedWalletTransactionCount()
     {
         return WalletTransaction::query()
+            ->with('customer')
             ->where('transaction_status', 'failed')
             ->count();
     }
@@ -66,6 +70,7 @@ class DashboardRespository
     public function successfulScheduledTransactionCount()
     {
         return ScheduledTransaction::query()
+            ->with('customer')
             ->where('transaction_status', 'completed')
             ->count();
     }
@@ -73,6 +78,7 @@ class DashboardRespository
     public function successfulWalletTransactionCount()
     {
         return WalletTransaction::query()
+            ->with('customer')
             ->where('transaction_status', 'completed')
             ->count();
     }

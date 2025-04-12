@@ -8,21 +8,22 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function __construct(private DashboardService $dashboardService){}
-    
+    public function __construct(private DashboardService $dashboardService) {}
+
     /**
      * Returns dashboard statistics
      */
     public function index()
     {
         $dashboardStatistics = $this->dashboardService->dashboardStatistics();
-        $latestTransactions =  $this->dashboardService->getLatestCustomerRegistration();
-        $latestUserRegistration = $this->dashboardService->getLatestScheduledTransaction();
+        $latestCustomers =  $this->dashboardService->getLatestCustomerRegistration();
+        $latestTransactions = $this->dashboardService->getLatestScheduledTransaction();
 
         $data = [
-            $dashboardStatistics, $latestTransactions, $latestUserRegistration
+            'stats' => $dashboardStatistics,
+            'transactions' => $latestTransactions,
+            'customers' => $latestCustomers
         ];
-        dd($data);
-        return Inertia::render('Dashboard', compact($data));
+        return Inertia::render('Dashboard', $data);
     }
 }

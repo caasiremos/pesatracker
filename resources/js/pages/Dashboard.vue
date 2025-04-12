@@ -3,10 +3,17 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
-import PlaceholderPattern from '../components/PlaceholderPattern.vue';
-import { CreditCard, CreditCardIcon, LucideCreditCard, MessageCircle, User, User2, Users2, UsersIcon } from 'lucide-vue-next';
+import { CreditCard, LucideCreditCard, MessageCircle, User, UsersIcon } from 'lucide-vue-next';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Pie } from 'vue-chartjs'
+import { PropType } from 'vue';
+
+const props = defineProps({
+    stats: Object,
+    transactions: Array,
+    users: Array,
+    customers: Array,
+});
 
 declare global {
     interface Window {
@@ -27,7 +34,7 @@ const chartData = {
     labels: ['Failed Transactions', 'Successful Transactions'],
     datasets: [
         {
-            backgroundColor: ['#EF4444', '#10B981'],  // red-500 and green-500 to match your existing color scheme
+            backgroundColor: ['#EF4444', '#3CB371'],  // red-500 and green-500 to match your existing color scheme
             data: [5000, 70000]  // Using your static figures from the dashboard
         }
     ]
@@ -66,7 +73,7 @@ function listen() {
                                 <User class="h-8 w-8 text-blue-500 mr-4" />
                                 <div>
                                     <p class="text-sm font-medium text-gray-500">Users</p>
-                                    <p class="text-2xl font-semibold text-gray-900">100</p>
+                                    <p class="text-2xl font-semibold text-gray-900">{{ stats.userCount }}</p>
                                 </div>
                             </div>
                         </div>
@@ -77,7 +84,7 @@ function listen() {
                                 <UsersIcon class="h-8 w-8 text-green-500 mr-4" />
                                 <div>
                                     <p class="text-sm font-medium text-gray-500">Customers</p>
-                                    <p class="text-2xl font-semibold text-gray-900">100</p>
+                                    <p class="text-2xl font-semibold text-gray-900">{{ stats.customerCount }}</p>
                                 </div>
                             </div>
                         </div>
@@ -88,47 +95,50 @@ function listen() {
                                 <MessageCircle class="h-8 w-8 text-yellow-500 mr-4" />
                                 <div>
                                     <p class="text-sm font-medium text-gray-500">Feedback</p>
-                                    <p class="text-2xl font-semibold text-gray-900">100</p>
+                                    <p class="text-2xl font-semibold text-gray-900">{{ stats.feedbackCount }}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Drugs Card -->
-                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <!-- Transactions Card -->
+                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mt-5">
                             <div class="flex items-center">
-                                 <LucideCreditCard class="h-8 w-8 text-purple-500 mr-4" />
+                                <LucideCreditCard class="h-8 w-8 text-purple-500 mr-4" />
                                 <div>
                                     <p class="text-sm font-medium text-gray-500">Transactions</p>
-                                    <p class="text-2xl font-semibold text-gray-900">UGX 1,000,0000,000</p>
+                                    <p class="text-2xl font-semibold text-gray-900">UGX {{ stats.totalTransactionSum }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Students Card -->
-                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <!-- Failed Transaction Card -->
+                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mt-5">
                             <div class="flex items-center">
                                 <CreditCard class="h-8 w-8 text-red-500 mr-4" />
                                 <div>
                                     <p class="text-sm font-medium text-gray-500">Failed Transactions</p>
-                                    <p class="text-2xl font-semibold text-gray-900">5,000</p>
+                                    <p class="text-2xl font-semibold text-gray-900">{{ stats.failedTransactionCount }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Leave Chits Card -->
-                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <!-- Successful Transactions Card -->
+                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mt-5">
                             <div class="flex items-center">
                                 <LucideCreditCard class="h-8 w-8 text-green-500 mr-4" />
                                 <div>
                                     <p class="text-sm font-medium text-gray-500">Successful Transactions</p>
-                                    <p class="text-2xl font-semibold text-gray-900">70,000</p>
+                                    <p class="text-2xl font-semibold text-gray-900">{{ stats.successfulTransactionCount
+                                        }}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- New row for Low Stock and Expired Drugs -->
-                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Low Stock Drugs Card -->
                         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                             <div class="flex items-center mb-4">
@@ -153,15 +163,34 @@ function listen() {
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                some name
+                                        <tr v-for="transaction in transactions" :key="transaction.id">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0 h-10 w-10">
+                                                        <div
+                                                            class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold">
+                                                            {{ transaction.customer.name.charAt(0).toUpperCase() }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">
+                                                            {{ transaction.customer.name }}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                some name
+                                                {{ transaction.amount }}
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                some name
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                <span :class="{
+                                                    'px-2 py-1 rounded-full text-xs font-medium': true,
+                                                    'bg-orange-100 text-orange-700': transaction.transaction_status === 'pending',
+                                                    'bg-green-100 text-green-700': transaction.transaction_status === 'completed',
+                                                    'bg-red-100 text-red-700': transaction.transaction_status === 'failed'
+                                                }">
+                                                    {{ transaction.transaction_status }}
+                                                </span>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -194,16 +223,28 @@ function listen() {
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                some again
+                                        <tr v-for="customer in customers" :key="customer.id">
+                                             <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0 h-10 w-10">
+                                                        <div
+                                                            class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold">
+                                                            {{ customer.name.charAt(0).toUpperCase() }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">
+                                                            {{ customer.name }}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                some again
+                                                {{ customer.email }}
                                             </td>
 
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                some again
+                                                {{ customer.phone_number }}
                                             </td>
                                         </tr>
                                     </tbody>
