@@ -36,4 +36,16 @@ class CustomerController extends Controller
             return new ApiErrorResponse($throwable->getMessage(), $throwable);
         }
     }
+
+    public function logout(Request $request)
+    {
+        try {
+            $customer = $this->customerService->logout($request);
+            return new ApiSuccessResponse($customer, "Customer Logout Successful");
+        } catch (ExpectedException $expectedException) {
+            return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
 }

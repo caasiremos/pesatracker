@@ -67,4 +67,9 @@ class CustomerService
             throw $throwable;
         }
     }
+
+    public function logout(Request $request)
+    {
+        return $this->customerRepository->logout($request);
+    }
 }

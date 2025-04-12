@@ -21,3 +21,4 @@ Route::prefix('customers')->controller(CustomerController::class)->group(functio
     Route::post('login', 'login');
 });
 
+Route::middleware('auth:sanctum')->post('/customers/logout', [CustomerController::class, 'logout']);

@@ -31,10 +31,15 @@ class CustomerRepository
         return $customer->makeHidden(['created_at', 'updated_at']);
     }
 
-    public function logout(Customer $customer) 
+    public function logout(Request $request) 
     {
-        return  $customer->createToken('auth_token')->plainTextToken;
+        return $request->user()->currentAccessToken()->delete();
     }
 
-    public function deactivate() {}
+    public function deactivate(Customer $customer) 
+    {
+        $customer->status = 'inactive';
+        $customer->save();
+        return $customer->refresh();
+    }
 }
