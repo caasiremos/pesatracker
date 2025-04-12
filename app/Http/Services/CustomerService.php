@@ -7,6 +7,7 @@ use App\Http\Respositories\CustomerRepository;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
 use App\Models\Customer;
+use Illuminate\Support\Facades\Hash;
 use Throwable;
 
 class CustomerService
@@ -24,6 +25,42 @@ class CustomerService
             ]);
 
             return $this->customerRepository->register($request);
+        } catch (ExpectedException $expectedException) {
+            throw $expectedException;
+        } catch (Throwable $throwable) {
+            throw $throwable;
+        }
+    }
+
+    public function login(Request $request)
+    {
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
+
+            $customer = Customer::query()
+                ->where('email', $request->email)
+                ->where('status', 'active')
+                ->first();
+
+            if (!$customer) {
+                throw new ExpectedException("Customer with this email does not exist");
+            }
+
+            if (!Hash::check($request->password, $customer->password)) {
+                throw new ExpectedException("Incorrect Password");
+            }
+
+             $token = $this->customerRepository->login($customer);
+
+            $data = [
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'agent' => $customer->only('name', 'email', 'phone_number', 'status'),
+            ];
+            return $data;
         } catch (ExpectedException $expectedException) {
             throw $expectedException;
         } catch (Throwable $throwable) {

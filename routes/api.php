@@ -18,5 +18,6 @@ Route::get('/game', function(){
 //Auth endpoints
 Route::prefix('customers')->controller(CustomerController::class)->group(function(){
     Route::post('register', 'store');
+    Route::post('login', 'login');
 });
 

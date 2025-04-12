@@ -9,7 +9,10 @@ use Illuminate\Support\Facades\Hash;
 
 class CustomerRepository
 {
-    public function login() {}
+    public function login(Customer $customer) 
+    {
+        return  $customer->createToken('auth_token')->plainTextToken;
+    }
 
     /**
      * creates new customer account
@@ -28,7 +31,10 @@ class CustomerRepository
         return $customer->makeHidden(['created_at', 'updated_at']);
     }
 
-    public function logout() {}
+    public function logout(Customer $customer) 
+    {
+        return  $customer->createToken('auth_token')->plainTextToken;
+    }
 
     public function deactivate() {}
 }

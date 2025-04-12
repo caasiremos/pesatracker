@@ -24,4 +24,16 @@ class CustomerController extends Controller
             return new ApiErrorResponse($throwable->getMessage(), $throwable);
         }
     }
+
+    public function login(Request $request)
+    {
+        try {
+            $customer = $this->customerService->login($request);
+            return new ApiSuccessResponse($customer, "Customer Login Successful");
+        } catch (ExpectedException $expectedException) {
+            return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
 }
