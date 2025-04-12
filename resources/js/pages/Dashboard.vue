@@ -4,7 +4,6 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
 import PlaceholderPattern from '../components/PlaceholderPattern.vue';
-import { UserIcon, BeakerIcon, ShieldExclamationIcon, AcademicCapIcon, DocumentTextIcon, ClipboardDocumentListIcon, ExclamationTriangleIcon, ClockIcon } from '@heroicons/vue/24/solid';
 import { CreditCard, CreditCardIcon, LucideCreditCard, MessageCircle, User, User2, Users2, UsersIcon } from 'lucide-vue-next';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Pie } from 'vue-chartjs'
