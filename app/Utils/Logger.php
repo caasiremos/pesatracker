@@ -23,7 +23,7 @@ class Logger
     /**
      * Logs custom exceptions passed to it or throwable
      */
-    public static function error(Throwable $throwable = null, Exception $exception = null)
+    public static function error(?Throwable $throwable = null, ?Exception $exception = null)
     {
         $exceptionThrowable = $throwable ?: $exception;
         Log::error("{$exceptionThrowable->getMessage()} @ {$exceptionThrowable->getFile()}: {$exceptionThrowable->getLine()}");
