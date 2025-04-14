@@ -7,6 +7,8 @@ use App\Http\Respositories\CustomerRepository;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
 use App\Models\Customer;
+use App\Models\Otp;
+use App\Utils\SMS;
 use Illuminate\Support\Facades\Hash;
 use Throwable;
 
@@ -71,5 +73,40 @@ class CustomerService
     public function logout(Request $request)
     {
         return $this->customerRepository->logout($request);
+    }
+
+      /**
+     * Send OTP to customer to verify phone number
+     */
+    public function sendOtp(): int
+    {
+        $code =  $this->customerRepository->sendOtp();
+        SMS::send(request()->phone_number, "Pesatrack OTP is {$code}. Don't share this code with anyone.");
+        return $code;
+    }
+
+    /**
+     * Verify that the OTP is valid
+     */
+    public function verifyOtp(Request $request): bool
+    {
+        try {
+            $otp = Otp::query()
+                ->where('phone_number', $request->phone_number)
+                ->where('code', $request->code)
+                ->where('type', $request->type)
+                ->where('matched', false)
+                ->first();
+
+            if (!$otp) {
+                throw new ExpectedException("Invalid OTP");
+            }
+
+            return $this->customerRepository->verifyOtp();
+        } catch (ExpectedException $expectedException) {
+            throw $expectedException;
+        } catch (Throwable $throwable) {
+            throw $throwable;
+        }
     }
 }

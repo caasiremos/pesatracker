@@ -13,7 +13,7 @@ class CustomerController extends Controller
 {
     public function __construct(private CustomerService $customerService) {}
 
-    public function store(Request $request)
+    public function store(Request $request): ApiSuccessResponse|ApiErrorResponse
     {
         try {
             $customer = $this->customerService->register($request);
@@ -25,7 +25,7 @@ class CustomerController extends Controller
         }
     }
 
-    public function login(Request $request)
+    public function login(Request $request): ApiSuccessResponse|ApiErrorResponse
     {
         try {
             $customer = $this->customerService->login($request);
@@ -37,11 +37,46 @@ class CustomerController extends Controller
         }
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): ApiSuccessResponse|ApiErrorResponse
     {
         try {
             $customer = $this->customerService->logout($request);
             return new ApiSuccessResponse($customer, "Customer Logout Successful");
+        } catch (ExpectedException $expectedException) {
+            return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
+    /**
+     * Send OTP to customer
+     * @param  Request  $request - params
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
+    public function sendOtp(Request $request): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $response = $this->customerService->sendOtp();
+
+            return new ApiSuccessResponse($response);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
+    /**
+     * Verify OTP submitted
+     *
+     * @param  Request  $request - params
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
+    public function verifyOtp(Request $request): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $response = $this->customerService->verifyOtp($request);
+
+            return new ApiSuccessResponse($response);
         } catch (ExpectedException $expectedException) {
             return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
         } catch (Throwable $throwable) {

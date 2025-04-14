@@ -35,4 +35,7 @@ return [
         ],
     ],
 
+    'eazzyconnect' => [
+        'api_key' => env('EZZY_CONNECT_API_KEY'),
+    ],
 ];

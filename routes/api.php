@@ -20,6 +20,8 @@ Route::get('/game', function () {
 Route::prefix('customers')->controller(CustomerController::class)->group(function () {
     Route::post('register', 'store');
     Route::post('login', 'login');
+    Route::post('send-otp',  'sendOtp');
+    Route::post('verify-otp',  'verifyOtp');
 });
 
 Route::prefix('customers')->group(function () {
