@@ -3,6 +3,7 @@
 use App\Events\GameEvent;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\MerchantController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,9 +26,20 @@ Route::prefix('customers')->controller(CustomerController::class)->group(functio
 });
 
 Route::prefix('customers')->group(function () {
-    Route::get('{customer}/categories', [CategoryController::class, 'index']);
-    Route::post('{customer}/categories', [CategoryController::class, 'store']);
-    Route::put('{customer}/categories/{category}/update', [CategoryController::class, 'update']);
-    Route::delete('{customer}/categories/{category}/delete', [CategoryController::class, 'destroy']);
+    //Customer Categories
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('{customer}/categories', 'index');
+        Route::post('{customer}/categories', 'store');
+        Route::put('{customer}/categories/{category}/update', 'update');
+        Route::delete('{customer}/categories/{category}/delete', 'destroy');
+    });
+    //Customer Merchants
+    Route::controller(MerchantController::class)->group(function () {
+        Route::get('{customer}/merchants', 'index');
+        Route::post('{customer}/merchants', 'store');
+        Route::put('{customer}/merchants/{merchant}/update', 'update');
+        Route::delete('{customer}/merchants/{merchant}/delete', 'destroy');
+    });
+
     Route::post('logout', [CustomerController::class, 'logout']);
 })->middleware('auth:sanctum');

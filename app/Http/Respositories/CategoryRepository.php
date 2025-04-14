@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class CategoryRepository
 {
-    public function getCategory(Customer $customer)
+    public function getCustomerCategories(Customer $customer)
     {
         return Category::query()
             ->select('name')

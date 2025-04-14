@@ -4,28 +4,30 @@ namespace App\Http\Services;
 
 use App\Exceptions\ExpectedException;
 use App\Http\Respositories\CategoryRepository;
+use App\Http\Respositories\MerchantRepository;
 use App\Models\Category;
 use App\Models\Customer;
+use App\Models\Merchant;
 use Illuminate\Http\Request;
 use Throwable;
 
-class CategoryService
+class MerchantService
 {
-    public function __construct(private CategoryRepository $category) {}
+    public function __construct(private MerchantRepository $merchantRepository) {}
 
-    public function getCategory(Customer $customer)
+    public function getCustomerMerchant(Customer $customer)
     {
-        return $this->category->getCustomerCategories($customer);
+        return $this->merchantRepository->getCustomerMerchants($customer);
     }
 
-    public function createCategory(Request $request, Customer $customer)
+    public function createMerchant(Request $request, Customer $customer)
     {
         try {
             $request->validate([
                 'name' => 'required',
             ]);
 
-            return $this->category->createCategory($request, $customer);
+            return $this->merchantRepository->createMerchant($request, $customer);
         } catch (ExpectedException $expectedException) {
             throw $expectedException;
         } catch (Throwable $throwable) {
@@ -33,14 +35,14 @@ class CategoryService
         }
     }
 
-    public function updateCategory(Request $request, Category $category)
+    public function updateMerchant(Request $request, Merchant $merchant)
     {
         try {
             $request->validate([
                 'name' => 'required',
             ]);
 
-            return $this->category->updateCategory($request, $category);
+            return $this->merchantRepository->updateMerchant($request, $merchant);
         } catch (ExpectedException $expectedException) {
             throw $expectedException;
         } catch (Throwable $throwable) {
@@ -48,19 +50,19 @@ class CategoryService
         }
     }
 
-    public function deleteCategory(Category $category, Customer $customer)
+    public function deleteMerchant(Merchant $merchant, Customer $customer)
     {
         try {
-            $category = Category::query()
+            $merchant = Merchant::query()
                 ->where('customer_id', $customer->id)
-                ->where('id', $category->id)
+                ->where('id', $merchant->id)
                 ->first();
 
-            if(!$category){
-                throw new ExpectedException("Category not found or does not belong to customer");
+            if(!$merchant){
+                throw new ExpectedException("Merchant not found or does not belong to customer");
             }
 
-            return $this->category->deleteCategory($category);
+            return $this->merchantRepository->deleteMerchant($merchant);
         } catch (ExpectedException $expectedException) {
             throw $expectedException;
         } catch (Throwable $throwable) {
