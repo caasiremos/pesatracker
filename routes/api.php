@@ -4,6 +4,7 @@ use App\Events\GameEvent;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MerchantController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -48,6 +49,12 @@ Route::prefix('customers')->group(function () {
         Route::post('{customer}/budgets', 'store');
         Route::put('{customer}/budgets/{budget}/update', 'update');
         Route::delete('{customer}/budgets/{budget}/delete', 'destroy');
+    });
+
+     //Customer Budgets
+    Route::controller(FeedbackController::class)->group(function () {
+        Route::get('{customer}/feedbacks', 'index');
+        Route::post('{customer}/feedbacks', 'store');
     });
 
     Route::post('logout', [CustomerController::class, 'logout']);
