@@ -3,9 +3,7 @@
 namespace App\Http\Services;
 
 use App\Exceptions\ExpectedException;
-use App\Http\Respositories\CategoryRepository;
-use App\Http\Respositories\MerchantRepository;
-use App\Models\Category;
+use App\Http\Repositories\MerchantRepository;
 use App\Models\Customer;
 use App\Models\Merchant;
 use Illuminate\Http\Request;

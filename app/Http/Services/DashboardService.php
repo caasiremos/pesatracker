@@ -2,7 +2,7 @@
 
 namespace App\Http\Services;
 
-use App\Http\Respositories\DashboardRespository;
+use App\Http\Repositories\DashboardRespository;
 use App\Utils\Money;
 
 class DashboardService

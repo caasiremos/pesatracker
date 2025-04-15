@@ -3,7 +3,7 @@
 namespace App\Http\Services;
 
 use App\Exceptions\ExpectedException;
-use App\Http\Respositories\CustomerRepository;
+use App\Http\Repositories\CustomerRepository;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
 use App\Models\Customer;
