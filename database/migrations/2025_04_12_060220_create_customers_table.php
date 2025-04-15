@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('phone_number')->unique();
             $table->string('status')->default('active');
             $table->string('avatar')->nullable();
+            $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('otps', function (Blueprint $table) {
-           $table->id();
+            $table->id();
             $table->string('phone_number');
             $table->string('code');
             $table->string('type')->nullable();
             $table->boolean('matched')->default(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

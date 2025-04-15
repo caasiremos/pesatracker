@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('customer_id')->index()->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->index()->constrained()->onDelete('cascade');
             $table->integer('amount');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('transaction_reference')->nullable();
             $table->string('transaction_status')->nullable();
             $table->string('telecom_product')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

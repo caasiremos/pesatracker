@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('customer_id')->index()->constrained()->onDelete('cascade');
             $table->string('wallet_identifier');
             $table->integer('balance');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
