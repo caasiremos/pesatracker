@@ -22,7 +22,7 @@ class BudgetService
     {
         try {
             $request->validate([
-                'name' => 'required',
+                'amount' => 'required|integer',
                 'category_id' => [
                     'required',
                     'exists:categories,id',
@@ -48,7 +48,7 @@ class BudgetService
     {
         try {
              $request->validate([
-                'name' => 'required',
+                'amount' => 'required',
                 'category_id' => [
                     'required',
                     'exists:categories,id',

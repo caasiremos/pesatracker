@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Services\CategoryService;
-use App\Models\Customer;
-use Illuminate\Http\Request;
-use Throwable;
 use App\Exceptions\ExpectedException;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
-use App\Models\Category;
+use App\Http\Services\BudgetService;
+use App\Models\Budget;
+use App\Models\Customer;
+use Illuminate\Http\Request;
+use Throwable;
 
-class CategoryController extends Controller
+class BudgetController extends Controller
 {
-    public function __construct(private CategoryService $categoryService) {}
+public function __construct(private BudgetService $budgetService) {}
 
     public function index(Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $customer = $this->categoryService->getCategory($customer);
+            $customer = $this->budgetService->getCustomerBudgets($customer);
             return new ApiSuccessResponse($customer, "Success");
         } catch (ExpectedException $expectedException) {
             return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
@@ -30,8 +30,8 @@ class CategoryController extends Controller
     public function store(Request $request, Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $customer = $this->categoryService->createCategory($request, $customer);
-            return new ApiSuccessResponse($customer, "Category Created Successful");
+            $customer = $this->budgetService->createBudget($request, $customer);
+            return new ApiSuccessResponse($customer, "Budget Created Successful");
         } catch (ExpectedException $expectedException) {
             return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
         } catch (Throwable $throwable) {
@@ -39,11 +39,11 @@ class CategoryController extends Controller
         }
     }
 
-    public function update(Request $request, Customer $customer, Category $category): ApiSuccessResponse|ApiErrorResponse
+    public function update(Request $request, Customer $customer, Budget $budget): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $customer = $this->categoryService->updateCategory($request, $category);
-            return new ApiSuccessResponse($customer, "Category Updated Successful");
+            $customer = $this->budgetService->updateBudget($request, $budget, $customer);
+            return new ApiSuccessResponse($customer, "Budget Updated Successful");
         } catch (ExpectedException $expectedException) {
             return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
         } catch (Throwable $throwable) {
@@ -51,11 +51,11 @@ class CategoryController extends Controller
         }
     }
 
-    public function destroy(Customer $customer, Category $category): ApiSuccessResponse|ApiErrorResponse
+    public function destroy(Customer $customer, Budget $budget): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $customer = $this->categoryService->deleteCategory($category, $customer);
-            return new ApiSuccessResponse($customer, "Category Deleted Successful");
+            $customer = $this->budgetService->deleteBudget($budget, $customer);
+            return new ApiSuccessResponse($customer, "Budget Deleted Successful");
         } catch (ExpectedException $expectedException) {
             return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
         } catch (Throwable $throwable) {
@@ -63,3 +63,4 @@ class CategoryController extends Controller
         }
     }
 }
+

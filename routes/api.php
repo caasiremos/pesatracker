@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\GameEvent;
+use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MerchantController;
@@ -39,6 +40,14 @@ Route::prefix('customers')->group(function () {
         Route::post('{customer}/merchants', 'store');
         Route::put('{customer}/merchants/{merchant}/update', 'update');
         Route::delete('{customer}/merchants/{merchant}/delete', 'destroy');
+    });
+
+    //Customer Budgets
+    Route::controller(BudgetController::class)->group(function () {
+        Route::get('{customer}/budgets', 'index');
+        Route::post('{customer}/budgets', 'store');
+        Route::put('{customer}/budgets/{budget}/update', 'update');
+        Route::delete('{customer}/budgets/{budget}/delete', 'destroy');
     });
 
     Route::post('logout', [CustomerController::class, 'logout']);

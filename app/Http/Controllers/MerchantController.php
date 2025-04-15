@@ -15,7 +15,7 @@ class MerchantController extends Controller
 {
     public function __construct(private MerchantService $merchantService) {}
 
-    public function index(Customer $customer)
+    public function index(Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
         try {
             $customer = $this->merchantService->getCustomerMerchant($customer);
@@ -27,7 +27,7 @@ class MerchantController extends Controller
         }
     }
 
-    public function store(Request $request, Customer $customer)
+    public function store(Request $request, Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
         try {
             $customer = $this->merchantService->createMerchant($request, $customer);
@@ -39,7 +39,7 @@ class MerchantController extends Controller
         }
     }
 
-    public function update(Request $request, Customer $customer, Merchant $merchant)
+    public function update(Request $request, Customer $customer, Merchant $merchant): ApiSuccessResponse|ApiErrorResponse
     {
         try {
             $customer = $this->merchantService->updateMerchant($request, $merchant);
@@ -51,7 +51,7 @@ class MerchantController extends Controller
         }
     }
 
-     public function destroy(Customer $customer, Merchant $merchant)
+    public function destroy(Customer $customer, Merchant $merchant): ApiSuccessResponse|ApiErrorResponse
     {
         try {
             $customer = $this->merchantService->deleteMerchant($merchant, $customer);

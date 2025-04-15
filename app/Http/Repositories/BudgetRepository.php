@@ -12,9 +12,10 @@ class BudgetRepository
     public function getCustomerBudgets(Customer $customer)
     {
         return Budget::query()
-            ->with('category')
-            ->select('amount')
-            ->where('customer_id', $customer->id)->get();
+            ->with('category:id,name') // Only select id and name from category
+            ->select(['id', 'amount', 'category_id']) // Must include category_id
+            ->where('customer_id', $customer->id)
+            ->get();
     }
 
     public function createBudget(Request $request, Customer $customer)
