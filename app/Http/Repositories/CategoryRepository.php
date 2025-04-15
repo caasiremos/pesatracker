@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Respositories;
+namespace App\Http\Repositories;
 
 use App\Models\Category;
 use App\Models\Customer;
