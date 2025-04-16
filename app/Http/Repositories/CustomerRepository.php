@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class CustomerRepository
 {
-    public function login(Customer $customer) 
+    public function login(Customer $customer)
     {
         return  $customer->createToken('auth_token')->plainTextToken;
     }
@@ -32,12 +32,12 @@ class CustomerRepository
         return $customer->makeHidden(['created_at', 'updated_at']);
     }
 
-    public function logout(Request $request) 
+    public function logout(Request $request)
     {
         return $request->user()->currentAccessToken()->delete();
     }
 
-    public function deactivate(Customer $customer) 
+    public function deactivate(Customer $customer)
     {
         $customer->status = 'inactive';
         $customer->save();
@@ -70,7 +70,18 @@ class CustomerRepository
             ->first();
 
         $otp->matched = true;
+        $otp->save();
+        $this->updateCustomerStatus(request()->phone_number);
+        return true;
+    }
 
-        return $otp->save();
+    /**
+     * When the customer confirms their phone number, activate their account
+     */
+    private function updateCustomerStatus(String $phoneNumber)
+    {
+        $customer = Customer::query()->where('phone_number', $phoneNumber)->first();
+        $customer->status = 'active';
+        $customer->save();
     }
 }

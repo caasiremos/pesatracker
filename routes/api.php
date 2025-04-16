@@ -2,6 +2,7 @@
 
 use App\Events\GameEvent;
 use App\Http\Controllers\BudgetController;
+use App\Http\Controllers\CashExpenseTransactionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FeedbackController;
@@ -35,6 +36,7 @@ Route::prefix('customers')->group(function () {
         Route::put('{customer}/categories/{category}/update', 'update');
         Route::delete('{customer}/categories/{category}/delete', 'destroy');
     });
+    
     //Customer Merchants
     Route::controller(MerchantController::class)->group(function () {
         Route::get('{customer}/merchants', 'index');
@@ -55,6 +57,12 @@ Route::prefix('customers')->group(function () {
     Route::controller(FeedbackController::class)->group(function () {
         Route::get('{customer}/feedbacks', 'index');
         Route::post('{customer}/feedbacks', 'store');
+    });
+
+    //Customer Cash Expense Transactions
+    Route::controller(CashExpenseTransactionController::class)->group(function () {
+        Route::get('{customer}/cash-expense-transactions', 'index');
+        Route::post('{customer}/cash-expense-transactions', 'store');
     });
 
     Route::post('logout', [CustomerController::class, 'logout']);
