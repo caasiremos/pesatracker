@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MerchantController;
+use App\Http\Controllers\ScheduledTransactionController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,7 +37,7 @@ Route::prefix('customers')->group(function () {
         Route::put('{customer}/categories/{category}/update', 'update');
         Route::delete('{customer}/categories/{category}/delete', 'destroy');
     });
-    
+
     //Customer Merchants
     Route::controller(MerchantController::class)->group(function () {
         Route::get('{customer}/merchants', 'index');
@@ -53,7 +54,7 @@ Route::prefix('customers')->group(function () {
         Route::delete('{customer}/budgets/{budget}/delete', 'destroy');
     });
 
-     //Customer Budgets
+    //Customer Budgets
     Route::controller(FeedbackController::class)->group(function () {
         Route::get('{customer}/feedbacks', 'index');
         Route::post('{customer}/feedbacks', 'store');
@@ -63,6 +64,12 @@ Route::prefix('customers')->group(function () {
     Route::controller(CashExpenseTransactionController::class)->group(function () {
         Route::get('{customer}/cash-expense-transactions', 'index');
         Route::post('{customer}/cash-expense-transactions', 'store');
+    });
+
+    //Customer Cash Expense Transactions
+    Route::controller(ScheduledTransactionController::class)->group(function () {
+        Route::get('{customer}/scheduled-transactions', 'index');
+        Route::post('{customer}/scheduled-transactions', 'store');
     });
 
     Route::post('logout', [CustomerController::class, 'logout']);

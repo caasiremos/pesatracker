@@ -36,17 +36,6 @@ class CashExpenseTransactionService
                         }
                     },
                 ],
-                 'merchant_id' => [
-                    'required',
-                    'exists:merchants,id',
-                    // Add a custom rule to verify the category belongs to the customer
-                    function ($attribute, $value, $fail) use ($customer) {
-                        $merchantExists = $customer->merchants()->where('id', $value)->exists();
-                        if (!$merchantExists) {
-                            $fail('The selected merchant does not belong to this customer.');
-                        }
-                    },
-                ]
             ]);
 
             return $this->cashExpenseTransaction->createCashExpenseTransaction($request, $customer);
