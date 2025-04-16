@@ -32,6 +32,17 @@ class CustomerRepository
         return $customer->makeHidden(['created_at', 'updated_at']);
     }
 
+    public function updateCustomerDetails(Request $request, Customer $customer)
+    {
+        $customer = Customer::query()->find($customer->id)->first();
+        $customer->name =  $request->name;
+        $customer->email = $request->email;
+        $customer->phone_number =  $request->phone_number;
+        $customer->avatar = $this->saveDocumentFile($request, 'avatar', $customer);
+        $customer->save();
+        return $customer->refresh();
+    }
+
     public function logout(Request $request)
     {
         return $request->user()->currentAccessToken()->delete();
@@ -83,5 +94,23 @@ class CustomerRepository
         $customer = Customer::query()->where('phone_number', $phoneNumber)->first();
         $customer->status = 'active';
         $customer->save();
+    }
+
+     /**
+     * Process document and save to storage
+     *
+     * @param  Request  $request - params
+     * @param  string  $document_name - name to save document
+     * @param  Customer  $customer - customer
+     * @return void
+     */
+    private function saveDocumentFile(Request $request, $document_name, Customer $customer)
+    {
+        if ($request->hasFile($document_name)) {
+            $path = rand(1111111, 99999999) . '-' . date('m.d.y') . '.' . $request->file($document_name)
+                ->getClientOriginalExtension();
+            $request->file($document_name)->move(public_path('attachments'), $path);
+            $customer->$document_name = '/attachments/' . $path;
+        }
     }
 }

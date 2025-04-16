@@ -34,6 +34,17 @@ class CustomerService
         }
     }
 
+    public function updatedCustomerDetails(Request $request, Customer $customer)
+    {
+        try {
+            return $this->customerRepository->updateCustomerDetails($request, $customer);
+        } catch (ExpectedException $expectedException) {
+            throw $expectedException;
+        } catch (Throwable $throwable) {
+            throw $throwable;
+        }
+    }
+
     public function login(Request $request)
     {
         try {
