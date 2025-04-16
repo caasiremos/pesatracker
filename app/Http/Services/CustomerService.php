@@ -9,6 +9,7 @@ use Illuminate\Validation\Rules;
 use App\Models\Customer;
 use App\Models\Otp;
 use App\Utils\SMS;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Throwable;
 

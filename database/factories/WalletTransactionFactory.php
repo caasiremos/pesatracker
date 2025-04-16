@@ -22,7 +22,6 @@ class WalletTransactionFactory extends Factory
             'customer_id' => Customer::inRandomOrder()->first()->id,
             'wallet_id' => Wallet::inRandomOrder()->first()->id,
             'amount' => fake()->numberBetween(1000, 100000),
-            'type' => fake()->randomElement(['deposit', 'withdrawal']),
             'provider' => fake()->randomElement(['MTN', 'Airtel', 'Bank']),
             'transaction_phone_number' => fake()->phoneNumber(),
             'transaction_reference' => fake()->uuid(),

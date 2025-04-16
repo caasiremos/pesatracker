@@ -4,9 +4,12 @@ namespace App\Http\Repositories;
 
 use App\Models\Customer;
 use App\Models\Otp;
+use App\Models\Wallet;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Throwable;
 
 class CustomerRepository
 {
@@ -73,17 +76,27 @@ class CustomerRepository
      */
     public function verifyOtp(): bool
     {
-        $otp = Otp::query()
-            ->where('phone_number', request()->phone_number)
-            ->where('code', request()->code)
-            ->where('type', request()->type)
-            ->where('matched', false)
-            ->first();
+        DB::beginTransaction();
+        try {
+            $otp = Otp::query()
+                ->where('phone_number', request()->phone_number)
+                ->where('code', request()->code)
+                ->where('type', request()->type)
+                ->where('matched', false)
+                ->first();
+            $otp->matched = true;
+            $otp->save();
 
-        $otp->matched = true;
-        $otp->save();
-        $this->updateCustomerStatus(request()->phone_number);
-        return true;
+            $this->updateCustomerStatus(request()->phone_number);
+
+            $this->createCustomerWallet(request()->phone_number);
+
+            DB::commit();
+            return true;
+        } catch (Throwable $throwable) {
+            DB::rollBack();
+            throw $throwable;
+        }
     }
 
     /**
@@ -96,7 +109,18 @@ class CustomerRepository
         $customer->save();
     }
 
-     /**
+    /**
+     * Create Customer wallet for successfully verifeid accounts
+     */
+    private function createCustomerWallet(String $phoneNumber)
+    {
+        $customer = Customer::query()->where('phone_number', $phoneNumber)->first();
+        Wallet::create([
+            'customer_id' => $customer->id,
+        ]);
+    }
+
+    /**
      * Process document and save to storage
      *
      * @param  Request  $request - params

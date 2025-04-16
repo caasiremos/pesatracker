@@ -19,8 +19,9 @@ class Wallet extends Model
     {
         parent::boot();
 
-        static::creating(function ($model) {
-            $model->wallet_identifier = 'PTW-' . str_pad(self::max('id') + 1, 5, '0', STR_PAD_LEFT);
+        static::creating(function ($wallet) {
+            $wallet->wallet_identifier = 'PTW-' . str_pad(self::max('id') + 1, 5, '0', STR_PAD_LEFT);
+            $wallet->balance = 0;
         });
     }
 

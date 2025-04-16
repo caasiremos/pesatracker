@@ -16,9 +16,8 @@ return new class extends Migration
             $table->foreignId('customer_id')->index()->constrained()->onDelete('cascade');
             $table->foreignId('wallet_id')->index()->constrained()->onDelete('cascade');
             $table->integer('amount');
-            $table->string('type');
-            $table->string('provider');
             $table->string('transaction_phone_number');
+            $table->string('provider')->nullable();
             $table->string('transaction_reference')->nullable();
             $table->string('transaction_status')->nullable();
             $table->string('telecom_product')->nullable();
