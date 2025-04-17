@@ -8,18 +8,26 @@ use Illuminate\Database\Eloquent\Model;
 class WalletTransaction extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'customer_id',
         'wallet_id',
         'amount',
-        'type',
         'provider',
         'transaction_phone_number',
         'transaction_reference',
         'transaction_status',
         'telecom_product'
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($transaction) {
+            $transaction->transaction_status = 'pending';
+        });
+    }
 
     public function customer()
     {

@@ -8,6 +8,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\ScheduledTransactionController;
+use App\Http\Controllers\WalletController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,11 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/customer', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-
-Route::get('/game', function () {
-    $user = User::find(1)->first();
-    broadcast(new GameEvent($user));
-});
 
 //Auth endpoints
 Route::prefix('customers')->controller(CustomerController::class)->group(function () {
@@ -72,6 +68,12 @@ Route::prefix('customers')->group(function () {
     Route::controller(ScheduledTransactionController::class)->group(function () {
         Route::get('{customer}/scheduled-transactions', 'index');
         Route::post('{customer}/scheduled-transactions', 'store');
+    });
+
+    //Customer Wallet
+    Route::controller(WalletController::class)->group(function () {
+        Route::get('{customer}/wallet', 'index');
+        Route::post('{customer}/deposit', 'store');
     });
 
     Route::post('logout', [CustomerController::class, 'logout']);

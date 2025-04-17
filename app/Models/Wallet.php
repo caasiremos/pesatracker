@@ -15,7 +15,7 @@ class Wallet extends Model
         'balance'
     ];
 
-  public static function boot()
+    public static function boot()
     {
         parent::boot();
 
