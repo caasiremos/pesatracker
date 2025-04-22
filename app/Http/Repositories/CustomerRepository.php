@@ -137,4 +137,22 @@ class CustomerRepository
             $customer->$document_name = '/attachments/' . $path;
         }
     }
+
+    public function getCustomers(Request $request)
+    {
+        $search = $request->input('search');
+
+        $customers = Customer::query()
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(7)
+            ->withQueryString();
+
+        return [
+            'customers' => $customers,
+            'filters' => ['search' => $search]
+        ];
+    }
 }

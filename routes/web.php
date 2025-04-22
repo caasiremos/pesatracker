@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\GameEvent;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +13,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
 });
 
 

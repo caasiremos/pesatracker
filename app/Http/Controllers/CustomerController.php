@@ -8,11 +8,18 @@ use App\Http\Responses\ApiSuccessResponse;
 use App\Http\Services\CustomerService;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Throwable;
 
 class CustomerController extends Controller
 {
     public function __construct(private CustomerService $customerService) {}
+
+    public function index(Request $request)
+    {
+        $data = $this->customerService->getCustomers($request);
+        return Inertia::render('Customers', $data);
+    }
 
     public function store(Request $request): ApiSuccessResponse|ApiErrorResponse
     {
