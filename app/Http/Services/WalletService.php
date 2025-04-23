@@ -32,4 +32,9 @@ class WalletService
             throw $throwable;
         }
     }
+
+    public function getCustomerWallets(Request $request)
+    {
+        return $this->walletRepository->getCustomerWallets($request);
+    }
 }

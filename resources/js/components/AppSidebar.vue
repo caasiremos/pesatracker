@@ -5,7 +5,7 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Users } from 'lucide-vue-next';
+import { BookOpen, CircleAlertIcon, CircleDashed, CreditCard, CreditCardIcon, Folder, FolderCheck, LayoutGrid, MessageCircleDashed, MessageCircleHeart, MessageCircleMore, Users, Wallet } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -14,10 +14,35 @@ const mainNavItems: NavItem[] = [
         href: '/dashboard',
         icon: LayoutGrid,
     },
-     {
+    {
         title: 'Customers',
         href: '/customers',
         icon: Users,
+    },
+    {
+        title: 'Wallets',
+        href: '/wallets',
+        icon: Wallet,
+    },
+    {
+        title: 'Wallet Transactions',
+        href: '/wallets',
+        icon: CircleAlertIcon,
+    },
+    {
+        title: 'Scheduled Transactions',
+        href: '/wallets',
+        icon: FolderCheck,
+    },
+    {
+        title: 'Cash Transactions',
+        href: '/wallets',
+        icon: CircleDashed,
+    },
+    {
+        title: 'Customer Feedbacks',
+        href: '/wallets',
+        icon: MessageCircleHeart,
     },
 ];
 </script>
@@ -29,7 +54,7 @@ const mainNavItems: NavItem[] = [
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
                         <Link :href="route('dashboard')">
-                            <AppLogo />
+                        <AppLogo />
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>

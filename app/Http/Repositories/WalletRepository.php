@@ -29,6 +29,30 @@ class WalletRepository
                 'transaction_phone_number' => $request->phone_number,
             ]);
 
-            return $walletTransactions;
+        return $walletTransactions;
+    }
+
+    public function getCustomerWallets(Request $request)
+    {
+        $search = $request->input('search');
+
+        $wallets = Wallet::query()
+            ->with('customer')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('wallet_identifier', 'like', "%{$search}%")
+                        ->orWhereHas('customer', function ($query) use ($search) {
+                            $query->where('name', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->latest()
+            ->paginate(7)
+            ->withQueryString();
+
+        return [
+            'wallets' => $wallets,
+            'filters' => ['search' => $search]
+        ];
     }
 }

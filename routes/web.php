@@ -3,6 +3,7 @@
 use App\Events\GameEvent;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\WalletController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -14,6 +15,7 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('/wallets', [WalletController::class, 'customerWallets'])->name('wallets.index');
 });
 
 

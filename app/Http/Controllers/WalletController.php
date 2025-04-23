@@ -8,14 +8,12 @@ use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Throwable;
 
 class WalletController extends Controller
 {
-    public function __construct(private WalletService $walletService)
-    {
-        
-    }
+    public function __construct(private WalletService $walletService) {}
 
     public function index(Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
@@ -29,7 +27,7 @@ class WalletController extends Controller
         }
     }
 
-     public function store(Request $request, Customer $customer): ApiSuccessResponse|ApiErrorResponse
+    public function store(Request $request, Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
         try {
             $customer = $this->walletService->initiateWalletDeposit($request, $customer);
@@ -39,5 +37,11 @@ class WalletController extends Controller
         } catch (Throwable $throwable) {
             return new ApiErrorResponse($throwable->getMessage(), $throwable);
         }
+    }
+
+    public function customerWallets(Request $request)
+    {
+        $data = $this->walletService->getCustomerWallets($request);
+        return Inertia::render('Wallets', $data);
     }
 }

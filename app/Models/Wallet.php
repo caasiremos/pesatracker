@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Utils\Money;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,6 +24,11 @@ class Wallet extends Model
             $wallet->wallet_identifier = 'PTW-' . str_pad(self::max('id') + 1, 5, '0', STR_PAD_LEFT);
             $wallet->balance = 0;
         });
+    }
+
+    public function getBalanceAttribute($value)
+    {
+        return Money::formatAmount($value);
     }
 
     /**
