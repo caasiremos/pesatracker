@@ -26,7 +26,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Wallet Transactions',
-        href: '/wallets',
+        href: '/wallet-transactions',
         icon: CircleAlertIcon,
     },
     {

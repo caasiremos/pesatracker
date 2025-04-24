@@ -37,4 +37,9 @@ class WalletService
     {
         return $this->walletRepository->getCustomerWallets($request);
     }
+
+    public function getWalletTransactions(Request $request)
+    {
+        return $this->walletRepository->getWalletTransactions($request);
+    }
 }

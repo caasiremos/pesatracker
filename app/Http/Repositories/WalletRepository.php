@@ -55,4 +55,34 @@ class WalletRepository
             'filters' => ['search' => $search]
         ];
     }
+
+    /**
+     * Wallet transactions like customer
+     */
+    public function getWalletTransactions(Request $request)
+    {
+        $search = $request->input('search');
+
+        $transactions = WalletTransaction::query()
+            ->with('customer', 'wallet')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->orWhereHas('customer', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                        ->orWhereHas('wallet', function ($q) use ($search) {
+                            $q->where('wallet_identifier', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->latest()
+            ->paginate(7)
+            ->withQueryString();
+
+
+        return [
+            'transactions' => $transactions,
+            'filters' => ['search' => $search]
+        ];
+    }
 }

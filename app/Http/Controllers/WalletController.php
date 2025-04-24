@@ -44,4 +44,10 @@ class WalletController extends Controller
         $data = $this->walletService->getCustomerWallets($request);
         return Inertia::render('Wallets', $data);
     }
+
+    public function walletWalletTransactions(Request $request)
+    {
+        $data = $this->walletService->getWalletTransactions($request);
+        return Inertia::render('WalletTransaction', $data);
+    }
 }

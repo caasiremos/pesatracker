@@ -16,6 +16,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::get('/wallets', [WalletController::class, 'customerWallets'])->name('wallets.index');
+    Route::get('/wallet-transactions', [WalletController::class, 'walletWalletTransactions'])->name('wallets.transactions');
 });
 
 
