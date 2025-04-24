@@ -41,7 +41,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Customer Feedbacks',
-        href: '/wallets',
+        href: '/feedbacks',
         icon: MessageCircleHeart,
     },
 ];

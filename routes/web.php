@@ -4,6 +4,7 @@ use App\Events\GameEvent;
 use App\Http\Controllers\CashExpenseTransactionController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ScheduledTransactionController;
 use App\Http\Controllers\WalletController;
 use App\Models\User;
@@ -18,6 +19,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::get('/wallets', [WalletController::class, 'customerWallets'])->name('wallets.index');
+    Route::get('/feedbacks', [FeedbackController::class, 'feedbacks'])->name('feedbacks.index');
     Route::get('/wallet-transactions', [WalletController::class, 'walletWalletTransactions'])->name('wallets.transactions');
     Route::get('/scheduled-transactions', [ScheduledTransactionController::class, 'scheduledTransactions'])->name('scheduled.transactions');
     Route::get('/cash-transactions', [CashExpenseTransactionController::class, 'cashExpenseTransactions'])->name('cash.transactions');

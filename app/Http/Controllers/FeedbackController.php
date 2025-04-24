@@ -8,6 +8,7 @@ use App\Http\Responses\ApiSuccessResponse;
 use App\Http\Services\FeedbackService;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Throwable;
 
 class FeedbackController extends Controller
@@ -36,6 +37,12 @@ public function __construct(private FeedbackService $feedbackService) {}
         } catch (Throwable $throwable) {
             return new ApiErrorResponse($throwable->getMessage(), $throwable);
         }
+    }
+
+    public function feedbacks(Request $request)
+    {
+        $data = $this->feedbackService->getFeedbacks($request);
+        return Inertia::render('Feedbacks', $data);
     }
 }
 

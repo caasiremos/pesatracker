@@ -23,4 +23,31 @@ class FeedbackRepository
                 'customer_id' => $customer->id
             ]);
     }
+
+
+     /**
+     * customer feedbacks
+     */
+    public function getFeedbacks(Request $request)
+    {
+        $search = $request->input('search');
+
+        $feedbacks = Feedback::query()
+            ->with('customer')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->orWhereHas('customer', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+                });
+            })
+            ->latest()
+            ->paginate(7)
+            ->withQueryString();
+
+        return [
+            'feedbacks' => $feedbacks,
+            'filters' => ['search' => $search]
+        ];
+    }
 }

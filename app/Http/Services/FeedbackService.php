@@ -17,6 +17,11 @@ class FeedbackService
         return $this->feedbackRepository->getCustomerFeedbacks($customer);
     }
 
+    public function getFeedbacks(Request $request)
+    {
+        return $this->feedbackRepository->getFeedbacks($request);
+    }
+
     public function createFeedback(Request $request, Customer $customer)
     {
         try {
