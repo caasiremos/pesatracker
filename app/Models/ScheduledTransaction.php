@@ -39,7 +39,7 @@ class ScheduledTransaction extends Model
 
     public function getPaymentDateAttribute($value)
     {
-        return Carbon::parse($value)->format('F j, Y');
+        return Carbon::parse($value)->format('d/m/Y');
     }
 
     // Relationships

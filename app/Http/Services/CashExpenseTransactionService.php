@@ -10,14 +10,16 @@ use Throwable;
 
 class CashExpenseTransactionService
 {
-    public function __construct(private CashExpenseTransactionRepository $cashExpenseTransaction)
+    public function __construct(private CashExpenseTransactionRepository $cashExpenseTransaction) {}
+
+    public function getCustomerCashExpenseTransaction(Customer $customer)
     {
-        
+        return $this->cashExpenseTransaction->getCustomerCashExpenseTransactions($customer);
     }
 
-    public function getCashExpenseTransaction(Customer $customer)
+    public function getCashExpenseTransaction(Request $request)
     {
-        return $this->cashExpenseTransaction->getCashExpenseTransactions($customer);
+        return $this->cashExpenseTransaction->getCashExpenseTransactions($request);
     }
 
     public function createCashExpenseTransaction(Request $request, Customer $customer)

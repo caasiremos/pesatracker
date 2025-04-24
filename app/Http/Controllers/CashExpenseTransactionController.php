@@ -8,6 +8,7 @@ use App\Http\Responses\ApiSuccessResponse;
 use App\Http\Services\CashExpenseTransactionService;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Throwable;
 
 class CashExpenseTransactionController extends Controller
@@ -17,7 +18,7 @@ class CashExpenseTransactionController extends Controller
     public function index(Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $customer = $this->cashExpenseTransaction->getCashExpenseTransaction($customer);
+            $customer = $this->cashExpenseTransaction->getCustomerCashExpenseTransaction($customer);
             return new ApiSuccessResponse($customer, "Success");
         } catch (ExpectedException $expectedException) {
             return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
@@ -36,5 +37,11 @@ class CashExpenseTransactionController extends Controller
         } catch (Throwable $throwable) {
             return new ApiErrorResponse($throwable->getMessage(), $throwable);
         }
+    }
+
+    public function cashExpenseTransactions(Request $request)
+    {
+        $data = $this->cashExpenseTransaction->getCashExpenseTransaction($request);
+        return Inertia::render('CashTransaction', $data);
     }
 }

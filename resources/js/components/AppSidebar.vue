@@ -36,7 +36,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Cash Transactions',
-        href: '/wallets',
+        href: '/cash-transactions',
         icon: CircleDashed,
     },
     {

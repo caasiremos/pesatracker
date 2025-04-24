@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\GameEvent;
+use App\Http\Controllers\CashExpenseTransactionController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ScheduledTransactionController;
@@ -19,6 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/wallets', [WalletController::class, 'customerWallets'])->name('wallets.index');
     Route::get('/wallet-transactions', [WalletController::class, 'walletWalletTransactions'])->name('wallets.transactions');
     Route::get('/scheduled-transactions', [ScheduledTransactionController::class, 'scheduledTransactions'])->name('scheduled.transactions');
+    Route::get('/cash-transactions', [CashExpenseTransactionController::class, 'cashExpenseTransactions'])->name('cash.transactions');
 });
 
 

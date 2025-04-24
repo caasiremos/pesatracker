@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Utils\Money;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class CashExpense extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'customer_id',
         'category_id',
@@ -29,6 +31,11 @@ class CashExpense extends Model
         'amount' => 'integer',
     ];
 
+    public function getAmountAttribute($value)
+    {
+        return Money::formatAmount($value);
+    }
+
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
@@ -37,5 +44,10 @@ class CashExpense extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function getPaymentDateAttribute($value)
+    {
+        return Carbon::parse($value)->format('d/m/Y');
     }
 }

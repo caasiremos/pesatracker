@@ -35,7 +35,7 @@ class ScheduledTransactionRepository
     }
 
     /**
-     * Wallet transactions like customer
+     * Scheduled transactions like customer
      */
     public function getScheduledTransactions(Request $request)
     {

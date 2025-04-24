@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class CashExpenseTransactionRepository
 {
-    public function getCashExpenseTransactions(Customer $customer)
+    public function getCustomerCashExpenseTransactions(Customer $customer)
     {
         return CashExpense::query()
             ->with('category:id,name',)
@@ -46,5 +46,32 @@ class CashExpenseTransactionRepository
             $request->file($document_name)->move(public_path('attachments'), $path);
             $customer->$document_name = '/attachments/' . $path;
         }
+    }
+
+     /**
+     * Scheduled transactions like customer
+     */
+    public function getCashExpenseTransactions(Request $request)
+    {
+        $search = $request->input('search');
+
+        $transactions = CashExpense::query()
+            ->with('customer', 'category')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->orWhereHas('customer', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+                });
+            })
+            ->latest()
+            ->paginate(7)
+            ->withQueryString();
+
+
+        return [
+            'transactions' => $transactions,
+            'filters' => ['search' => $search]
+        ];
     }
 }
