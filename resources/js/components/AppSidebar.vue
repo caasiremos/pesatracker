@@ -31,7 +31,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Scheduled Transactions',
-        href: '/wallets',
+        href: '/scheduled-transactions',
         icon: FolderCheck,
     },
     {

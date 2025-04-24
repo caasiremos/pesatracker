@@ -15,9 +15,14 @@ class ScheduledTransactionService
         
     }
 
-    public function getScheduledTransaction(Customer $customer)
+    public function getCustomerScheduledTransaction(Customer $customer)
     {
-        return $this->scheduledTransaction->getScheduledTransactions($customer);
+        return $this->scheduledTransaction->getCustomerScheduledTransactions($customer);
+    }
+
+    public function getScheduledTransactions(Request $request)
+    {
+        return $this->scheduledTransaction->getScheduledTransactions($request);
     }
 
     public function createScheduledTransaction(Request $request, Customer $customer)

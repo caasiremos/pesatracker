@@ -8,16 +8,17 @@ use App\Http\Responses\ApiSuccessResponse;
 use App\Http\Services\ScheduledTransactionService;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Throwable;
 
 class ScheduledTransactionController extends Controller
 {
-  public function __construct(private ScheduledTransactionService $scheduledTransactionService) {}
+    public function __construct(private ScheduledTransactionService $scheduledTransactionService) {}
 
     public function index(Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $customer = $this->scheduledTransactionService->getScheduledTransaction($customer);
+            $customer = $this->scheduledTransactionService->getCustomerScheduledTransaction($customer);
             return new ApiSuccessResponse($customer, "Success");
         } catch (ExpectedException $expectedException) {
             return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
@@ -37,5 +38,10 @@ class ScheduledTransactionController extends Controller
             return new ApiErrorResponse($throwable->getMessage(), $throwable);
         }
     }
-}
 
+    public function scheduledTransactions(Request $request)
+    {
+        $data = $this->scheduledTransactionService->getScheduledTransactions($request);
+        return Inertia::render('ScheduledTransaction', $data);
+    }
+}

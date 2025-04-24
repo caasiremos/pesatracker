@@ -5,11 +5,12 @@ namespace App\Http\Repositories;
 use App\Models\CashExpense;
 use App\Models\Customer;
 use App\Models\ScheduledTransaction;
+use Illuminate\Console\Events\ScheduledTaskFailed;
 use Illuminate\Http\Request;
 
 class ScheduledTransactionRepository
 {
-    public function getScheduledTransactions(Customer $customer)
+    public function getCustomerScheduledTransactions(Customer $customer)
     {
         return ScheduledTransaction::query()
             ->with('category:id,name', 'merchant:id,name')
@@ -31,5 +32,32 @@ class ScheduledTransactionRepository
                 'reference' => $request->frequency,
                 'note' => $request->note,
             ]);
+    }
+
+    /**
+     * Wallet transactions like customer
+     */
+    public function getScheduledTransactions(Request $request)
+    {
+        $search = $request->input('search');
+
+        $transactions = ScheduledTransaction::query()
+            ->with('customer', 'merchant', 'category')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->orWhereHas('customer', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+                });
+            })
+            ->latest()
+            ->paginate(7)
+            ->withQueryString();
+
+
+        return [
+            'transactions' => $transactions,
+            'filters' => ['search' => $search]
+        ];
     }
 }

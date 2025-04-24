@@ -16,7 +16,7 @@ const search = ref(props.filters?.search || '');
 
 watch(search, (value) => {
     router.get(
-        route('wallets.transactions'),
+        route('scheduled.transactions'),
         { search: value },
         {
             preserveState: true,
@@ -28,15 +28,15 @@ watch(search, (value) => {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Wallet Transactions',
-        href: '/wallet-transactions',
+        title: 'Scheduled Transactions',
+        href: '/scheduled-transactions',
     },
 ];
 </script>
 
 <template>
 
-    <Head title="Wallet Transactions" />
+    <Head title="Scheduled Transactions" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
@@ -68,8 +68,12 @@ const breadcrumbs: BreadcrumbItem[] = [
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Customer</th>
                                             <th
-                                                class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                                Wallet</th>
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Category</th>
+
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Merchant</th>
                                             <th
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Amount</th>
@@ -80,12 +84,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 
                                             <th
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Status</th>
+                                                Scheduled Payment Date</th>
 
                                             <th
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Reference</th>
-
+                                                Status</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
@@ -106,25 +109,28 @@ const breadcrumbs: BreadcrumbItem[] = [
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">{{
-                                                transaction.wallet.wallet_identifier }}</td>
+                                                transaction.category.name }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{
+                                                transaction.merchant.name }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-bold">
                                                 {{ transaction.amount }}</td>
 
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                                 {{ transaction.transaction_phone_number }}</td>
 
+                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                                {{ transaction.payment_date }}</td>
+
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                                 <span :class="{
                                                     'bg-green-100 text-green-800': transaction.transaction_status === 'completed',
                                                     'bg-red-100 text-red-800': transaction.transaction_status === 'failed',
                                                     'bg-orange-100 text-yellow-800': transaction.transaction_status === 'pending'
-                                                }" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+                                                }"
+                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
                                                     {{ transaction.transaction_status }}
                                                 </span>
                                             </td>
-
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                                {{ transaction.transaction_reference }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

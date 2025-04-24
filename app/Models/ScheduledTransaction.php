@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Utils\Money;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ScheduledTransaction extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'customer_id',
         'category_id',
@@ -30,6 +32,16 @@ class ScheduledTransaction extends Model
         'amount' => 'integer',
     ];
 
+    public function getAmountAttribute($value)
+    {
+        return Money::formatAmount($value);
+    }
+
+    public function getPaymentDateAttribute($value)
+    {
+        return Carbon::parse($value)->format('F j, Y');
+    }
+
     // Relationships
     public function customer()
     {
@@ -44,5 +56,10 @@ class ScheduledTransaction extends Model
     public function merchant()
     {
         return $this->belongsTo(Merchant::class);
+    }
+
+    public function wallet()
+    {
+        return $this->belongsTo(Wallet::class);
     }
 }
