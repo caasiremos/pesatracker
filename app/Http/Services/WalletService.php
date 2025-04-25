@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Exceptions\ExpectedException;
 use App\Http\Repositories\WalletRepository;
 use App\Models\Customer;
+use App\Utils\Logger;
 use Illuminate\Http\Request;
 use Throwable;
 
@@ -22,9 +23,9 @@ class WalletService
         try {
             $request->validate([
                 'amount' => 'required|integer',
-                'phone_number' => 'required'
+                'phone_number' => 'required',
             ]);
-
+            
             return $this->walletRepository->initiateWalletDeposit($request, $customer);
         } catch (ExpectedException $expectedException) {
             throw $expectedException;
@@ -41,5 +42,37 @@ class WalletService
     public function getWalletTransactions(Request $request)
     {
         return $this->walletRepository->getWalletTransactions($request);
+    }
+
+    public function airtelCallback(Request $request)
+    {
+        try {
+            Logger::info($request->all());
+
+            if ($request->transaction['status_code'] != 'TS') {
+                throw new ExpectedException('Airtel transaction callback failed');
+            }
+
+            return $this->walletRepository->airtelCallback($request);
+        } catch (ExpectedException $expectedException) {
+            throw $expectedException;
+        } catch (Throwable $throwable) {
+            throw $throwable;
+        }
+    }
+
+    public function mtnCallback(Request $request)
+    {
+        try {
+            Logger::info($request->all());
+            if ($request['status'] === 'FAILED') {
+                throw new ExpectedException('MTN callback transaction failed');
+            }
+            return $this->walletRepository->mtnCallback($request);
+        } catch (ExpectedException $expectedException) {
+            throw $expectedException;
+        } catch (Throwable $throwable) {
+            throw $throwable;
+        }
     }
 }

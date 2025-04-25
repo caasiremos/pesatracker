@@ -1,12 +1,14 @@
 <?php
 
 use App\Events\GameEvent;
+use App\Http\Controllers\AirtelMoneyCallbackController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CashExpenseTransactionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MerchantController;
+use App\Http\Controllers\MtnMomoCallbackController;
 use App\Http\Controllers\ScheduledTransactionController;
 use App\Http\Controllers\WalletController;
 use App\Models\User;
@@ -78,3 +80,9 @@ Route::prefix('customers')->group(function () {
 
     Route::post('logout', [CustomerController::class, 'logout']);
 })->middleware('auth:sanctum');
+
+//Telecom callback
+Route::controller(WalletController::class)->group(function () {
+    Route::post('airtel/callback', 'airtelCallback');
+    Route::post('mtn/callback', 'mtnCallback');
+});

@@ -39,6 +39,30 @@ class WalletController extends Controller
         }
     }
 
+    public function mtnCallback(Request $request): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $walletCallback = $this->walletService->mtnCallback($request);
+            return new ApiSuccessResponse($walletCallback, "Wallet Deposit successful.");
+        } catch (ExpectedException $expectedException) {
+            return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
+    public function airtelCallback(Request $request): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $walletCallback = $this->walletService->airtelCallback($request);
+            return new ApiSuccessResponse($walletCallback, "Wallet Deposit successful.");
+        } catch (ExpectedException $expectedException) {
+            return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
     public function customerWallets(Request $request)
     {
         $data = $this->walletService->getCustomerWallets($request);
