@@ -90,7 +90,7 @@ class AirtelMoneyGateWay
         $access_token = self::getAuthorizationToken();
         $request_body = [
             'payee' => [
-                'msisdn' => Util::formatAirtelPhoneNumber($phone_number),
+                'msisdn' => PhoneNumberUtil::formatAirtelPhoneNumber($phone_number),
             ],
             'reference' => 'Loangram disbursements',
             'pin' => config('services.telecom.airtel_pin'),
@@ -110,7 +110,7 @@ class AirtelMoneyGateWay
             'Authorization' => 'Bearer '.$access_token['access_token'],
         ])->post(self::DISBURSEMENTS, $request_body)
             ->json();
-        Logger::logInfo(['AIRTEL-DISBUREMENT-INITIATION' => $response]);
+        Logger::info(['AIRTEL-DISBUREMENT-INITIATION' => $response]);
 
         return $response;
     }

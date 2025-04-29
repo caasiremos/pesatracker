@@ -50,4 +50,9 @@ return [
         'mtn_disbursement_key' => env('MTN_DISBURSEMENT_SUBSCRIPTION_KEY'),
         'mtn_collection_key' => env('MTN_COLLECTION_SUBSCRIPTION_KEY'),
     ],
+
+    'relworx' => [
+        'api_key' => env('RELWOX_API_KEY'),
+        'account_id' => env('BUSSINESS_ACCOUNT')
+    ],
 ];
