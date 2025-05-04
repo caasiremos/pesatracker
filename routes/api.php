@@ -44,6 +44,9 @@ Route::prefix('customers')->group(function () {
         Route::post('{customer}/merchants', 'store');
         Route::put('{customer}/merchants/{merchant}/update', 'update');
         Route::delete('{customer}/merchants/{merchant}/delete', 'destroy');
+        Route::get('products', 'getProducts');
+        Route::get('products/price-list', 'getPriceList');
+        Route::get('products/choice-list', 'getChoiceList');
     });
 
     //Customer Budgets

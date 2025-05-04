@@ -15,6 +15,12 @@ class MerchantController extends Controller
 {
     public function __construct(private MerchantService $merchantService) {}
 
+    /**
+     * Get all merchants for a customer
+     * 
+     * @param Customer $customer
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
     public function index(Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
         try {
@@ -27,6 +33,13 @@ class MerchantController extends Controller
         }
     }
 
+    /**
+     * Create a merchant
+     * 
+     * @param Request $request
+     * @param Customer $customer
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
     public function store(Request $request, Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
         try {
@@ -39,6 +52,14 @@ class MerchantController extends Controller
         }
     }
 
+    /**
+     * Update a merchant
+     * 
+     * @param Request $request
+     * @param Customer $customer
+     * @param Merchant $merchant
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
     public function update(Request $request, Customer $customer, Merchant $merchant): ApiSuccessResponse|ApiErrorResponse
     {
         try {
@@ -51,11 +72,69 @@ class MerchantController extends Controller
         }
     }
 
+    /**
+     * Delete a merchant
+     * 
+     * @param Customer $customer
+     * @param Merchant $merchant
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
     public function destroy(Customer $customer, Merchant $merchant): ApiSuccessResponse|ApiErrorResponse
     {
         try {
             $customer = $this->merchantService->deleteMerchant($merchant, $customer);
             return new ApiSuccessResponse($customer, "Merchant Deleted Successful");
+        } catch (ExpectedException $expectedException) {
+            return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
+    /**
+     * Get all products
+     * 
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
+    public function getProducts(): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $products = $this->merchantService->getProducts();
+            return new ApiSuccessResponse($products, "Products Fetched Successful");
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
+    /**
+     * Get the price list for a product
+     * 
+     * @param Request $request
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
+    public function getPriceList(Request $request): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $priceList = $this->merchantService->getPriceList($request->code);
+            return new ApiSuccessResponse($priceList, "Price List Fetched Successful");
+        } catch (ExpectedException $expectedException) {
+            return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
+    /**
+     * Get the choice list for a product
+     * 
+     * @param Request $request
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
+    public function getChoiceList(Request $request): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $choiceList = $this->merchantService->getChoiceList($request->code);
+            return new ApiSuccessResponse($choiceList, "Choice List Fetched Successful");
         } catch (ExpectedException $expectedException) {
             return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
         } catch (Throwable $throwable) {

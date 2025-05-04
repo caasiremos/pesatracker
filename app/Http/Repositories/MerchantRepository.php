@@ -4,13 +4,18 @@ namespace App\Http\Repositories;
 
 use App\Models\Customer;
 use App\Models\Merchant;
+use App\Models\Relworx\Product;
+use App\Payment\Relworx\Products;
 use Illuminate\Http\Request;
 
 class MerchantRepository
 {
+    public function __construct(private Products $products){ }
+
     public function getCustomerMerchants(Customer $customer)
     {
         return Merchant::query()
+            ->with('product')
             ->select('name')
             ->where('customer_id', $customer->id)->get();
     }
@@ -20,7 +25,9 @@ class MerchantRepository
         return Merchant::query()
             ->create([
                 'name' => $request->name,
-                'customer_id' => $customer->id
+                'customer_id' => $customer->id,
+                'product_id' => $request->product_id,
+                'code' => $request->code,
             ]);
     }
 
@@ -28,6 +35,8 @@ class MerchantRepository
     {
         Merchant::query()->find($merchant->id)->update([
             'name' => $request->name,
+            'product_id' => $request->product_id,
+            'code' => $request->code,
         ]);
 
         return $merchant->refresh();
@@ -36,5 +45,20 @@ class MerchantRepository
      public function deleteMerchant(Merchant $merchant)
     {
         return Merchant::query()->find($merchant->id)->delete();
+    }
+
+    public function getProducts()
+    {
+        return Product::query()->where('category', '!=', 'BANK_TRANSFERS')->get();
+    }
+
+    public function getPriceList(string $code)
+    {
+        return $this->products->getPriceList($code);
+    }
+
+    public function getChoiceList(string $code)
+    {
+        return $this->products->getChoiceList($code);
     }
 }

@@ -59,7 +59,7 @@ class CustomerService
                 ->first();
 
             if (!$customer) {
-                throw new ExpectedException("Customer with this email does not exist");
+                throw new ExpectedException("Customer with this email does not exist or account is not active");
             }
 
             if (!Hash::check($request->password, $customer->password)) {
