@@ -10,6 +10,10 @@ class WalletTransaction extends Model
 {
     use HasFactory;
 
+    const STATUS_PENDING = 'pending';
+    const STATUS_SUCCESS = 'success';
+    const STATUS_FAILED = 'failed';
+
     protected $fillable = [
         'customer_id',
         'wallet_id',
@@ -17,6 +21,7 @@ class WalletTransaction extends Model
         'provider',
         'transaction_phone_number',
         'transaction_reference',
+        'external_reference',
         'transaction_status',
         'telecom_product'
     ];

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('transaction_phone_number');
             $table->string('provider')->nullable();
             $table->string('transaction_reference')->nullable();
+            $table->string('external_reference')->nullable();
             $table->string('transaction_status')->nullable();
             $table->string('telecom_product')->nullable();
             $table->softDeletes();

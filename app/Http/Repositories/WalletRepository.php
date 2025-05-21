@@ -9,25 +9,35 @@ use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Payment\AirtelMoneyGateWay;
 use App\Payment\MtnMomoGateWay;
+use App\Payment\Relworx\MobileMoney;
 use App\Utils\Logger;
 use App\Utils\PhoneNumberUtil;
 use App\Utils\SMS;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Expr\Throw_;
+use Illuminate\Support\Str;
 use PHPUnit\Event\Code\Throwable;
 
 class WalletRepository
 {
+    public function __construct(private MobileMoney $mobileMoney) {}
+
     public function getWalletDetails(Customer $customer)
     {
         return Wallet::query()
             ->select('customer_id', 'wallet_identifier', 'balance')
-            ->where('customer_id', $customer->id)
+            ->first('customer_id', $customer->id)
             ->first();
     }
 
     public function initiateWalletDeposit(Request $request, Customer $customer)
+    {
+        $walletTransactions = $this->initiateRelworxCollection($request, $customer);
+
+        return $walletTransactions;
+    }
+
+    private function initiateTelecomCollection(Request $request, Customer $customer)
     {
         $walletTransactions = WalletTransaction::query()
             ->create([
@@ -208,5 +218,28 @@ class WalletRepository
         $transaction_log->status = TransactionLog::STATUS_SUCCESS;
         $transaction_log->save();
         return true;
+    }
+
+    private function initiateRelworxCollection(Request $request, Customer $customer)
+    {
+        $reference = Str::uuid();
+        $response = $this->mobileMoney->initiateCollection($reference, $request->phone_number, $request->amount);
+        if ($response['success'] === true) {
+            $this->saveTransactionLogs($request, $response['internal_reference'], $customer, 'relworx', 'relworx collection');
+            //create wallet transaction
+            WalletTransaction::query()->create([
+                'customer_id' => $customer->id,
+                'wallet_id' => $customer->wallet->id,
+                'amount' => $request->amount,
+                'provider' => 'relworx',
+                'transaction_phone_number' => $request->phone_number,
+                'external_reference' => $response['internal_reference'],
+                'transaction_reference' => $reference,
+                'transaction_status' => WalletTransaction::STATUS_PENDING,
+                'telecom_product' => 'relworx collection',
+            ]);
+        } else {
+            throw new ExpectedException('Failed initiating relworx collection');
+        }
     }
 }

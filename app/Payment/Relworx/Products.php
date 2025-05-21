@@ -12,7 +12,9 @@ class Products
     private const PRODUCT_URL = "https://payments.relworx.com/api/products";
     private const PRICE_LIST_URL = "https://payments.relworx.com/api/products/price-list";
     private const CHOICE_LIST_URL = "https://payments.relworx.com/api/products/choice-list";
+    private const VALIDATE_PRODUCT_URL = "https://payments.relworx.com/api/products/validate";
     public string $apiKey;
+
     public function __construct()
     {
         $this->apiKey = config('services.relworx.api_key');
@@ -95,6 +97,27 @@ class Products
 
         Logger::info($response);
 
+        return $response;
+    }
+
+    public function validateProduct(string $accountNumber, string $reference, string $msisdn, int $amount, string $productCode, string $contactPhone)
+    {
+        $response = Http::asJson()->withHeaders(
+            [
+                'Accept' => 'application/vnd.relworx.v2',
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $this->apiKey
+            ],
+        )->post(self::VALIDATE_PRODUCT_URL, [
+            'account_no' => $accountNumber,
+            'reference' => $reference,
+            'msisdn' => $msisdn,
+            'amount' => $amount,
+            'product_code' => $productCode,
+            'contact_phone' => $contactPhone
+        ])->json();
+
+        Logger::info($response);
         return $response;
     }
 }
