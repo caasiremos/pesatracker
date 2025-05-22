@@ -75,7 +75,7 @@ class WalletController extends Controller
         return Inertia::render('WalletTransaction', $data);
     }
 
-    public function relworxCollectionCallback(Request $request): ApiErrorResponse
+    public function relworxCollectionCallback(Request $request)
     {
         try {
             $this->walletService->relworxCollectionCallback($request);
@@ -86,7 +86,7 @@ class WalletController extends Controller
         }
     }
 
-    public function relworxDisbursementCallback(Request $request): ApiErrorResponse
+    public function relworxDisbursementCallback(Request $request)
     {
         try {
             $this->walletService->relworxDisbursementCallback($request);
@@ -97,7 +97,7 @@ class WalletController extends Controller
         }
     }
 
-    public function relworxProductCallback(Request $request): ApiErrorResponse
+    public function relworxProductCallback(Request $request)
     {
         try {
             $this->walletService->relworxProductCallback($request);
