@@ -33,7 +33,6 @@ class MobileMoney
                 'Authorization' => 'Bearer ' . $this->apiKey
             ],
         )->post(self::INITIATE_COLLECTION_URL, $params)->json();
-        dd($response);
         Logger::info('Relworx initiate collection response', $response);
         return $response;
     }
