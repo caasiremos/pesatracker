@@ -74,4 +74,37 @@ class WalletController extends Controller
         $data = $this->walletService->getWalletTransactions($request);
         return Inertia::render('WalletTransaction', $data);
     }
+
+    public function relworxCollectionCallback(Request $request): ApiErrorResponse
+    {
+        try {
+            $this->walletService->relworxCollectionCallback($request);
+        } catch (ExpectedException $expectedException) {
+            new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
+    public function relworxDisbursementCallback(Request $request): ApiErrorResponse
+    {
+        try {
+            $this->walletService->relworxDisbursementCallback($request);
+        } catch (ExpectedException $expectedException) {
+            new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
+    public function relworxProductCallback(Request $request): ApiErrorResponse
+    {
+        try {
+            $this->walletService->relworxProductCallback($request);
+        } catch (ExpectedException $expectedException) {
+            new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
 }

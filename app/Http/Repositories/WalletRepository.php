@@ -242,4 +242,19 @@ class WalletRepository
             throw new ExpectedException('Failed initiating relworx collection');
         }
     }
+
+    public function relworxCollectionCallback(Request $request)
+    {
+        Logger::info('Relworx collection callback', $request->all());
+    }
+
+    public function relworxDisbursementCallback(Request $request)
+    {
+        Logger::info('Relworx disbursement callback', $request->all());
+    }
+
+    public function relworxProductCallback(Request $request)
+    {
+        Logger::info('Relworx product callback', $request->all());
+    }
 }

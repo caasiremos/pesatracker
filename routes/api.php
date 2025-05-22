@@ -88,4 +88,7 @@ Route::prefix('customers')->group(function () {
 Route::controller(WalletController::class)->group(function () {
     Route::post('airtel/callback', 'airtelCallback');
     Route::post('mtn/callback', 'mtnCallback');
+    Route::post('relworx/callback/collection', 'relworxCollectionCallback');
+    Route::post('relworx/callback/disbursement', 'relworxDisbursementCallback');
+    Route::post('relworx/callback/product', 'relworxProductCallback');
 });
