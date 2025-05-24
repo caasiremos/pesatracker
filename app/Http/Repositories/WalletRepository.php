@@ -253,7 +253,7 @@ class WalletRepository
                 $walletTransaction->save();
 
                 $wallet = Wallet::where('customer_id', $walletTransaction->customer_id)->first();
-                dd($request->amount);
+            
                 if ($wallet) {
                     $wallet->balance += $request->amount;
                     $wallet->save();
