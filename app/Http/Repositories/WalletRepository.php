@@ -263,7 +263,7 @@ class WalletRepository
                         $wallet->refresh();
                         DB::commit();
                         $formattedAmount = Money::formatAmount($request->amount);
-                        SMS::send($walletTransaction->customer->phone_number, "Your Pesatrack app wallet deposit of {$formattedAmount} was successful.");
+                        SMS::send($walletTransaction->customer->phone_number, "Your PesatTrack Wallet Topup of {$formattedAmount} was successful.");
                     } else {
                         throw new ExpectedException('Wallet not found for customer');
                     }
