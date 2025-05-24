@@ -2,12 +2,15 @@
 
 namespace App\Payment\Relworx;
 
+use App\Models\Customer;
+use App\Models\WalletTransaction;
 use App\Utils\Logger;
 use Illuminate\Support\Facades\Http;
 
 class MobileMoney
 {
     private const INITIATE_COLLECTION_URL = "https://payments.relworx.com/api/mobile-money/request-payment";
+    private const GET_TRANSACTION_STATUS_URL = "https://payments.relworx.com/api/mobile-money/check-request-status?internal_reference=";
     private $apiKey;
 
     public function __construct()
@@ -35,5 +38,32 @@ class MobileMoney
         )->post(self::INITIATE_COLLECTION_URL, $params)->json();
         Logger::info('Relworx initiate collection response', $response);
         return $response;
+    }
+
+    public function getTransactionStatus()
+    {
+        $walletTransactions = WalletTransaction::where('transaction_status', 'pending')->get();
+        foreach ($walletTransactions as $walletTransaction) {
+            $response = Http::asJson()->withHeaders(
+                [
+                    'Accept' => 'application/vnd.relworx.v2',
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Bearer ' . $this->apiKey
+                ],
+            )->get(self::GET_TRANSACTION_STATUS_URL . $walletTransaction->external_reference)->json();
+
+            Logger::info('Relworx get transaction status response', $response);
+
+            if ($response['success']) {
+                $walletTransaction->transaction_status = $response['status'];
+                $walletTransaction->save();
+
+                $customer = Customer::where('customer_id', $walletTransaction->customer_id)->first();
+                if ($customer) {
+                    $customer->balance += $walletTransaction->amount;
+                    $customer->save();
+                }
+            }
+        }
     }
 }

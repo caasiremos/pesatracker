@@ -78,16 +78,16 @@ class WalletService
 
     public function relworxCollectionCallback(Request $request)
     {
-        return $this->walletRepository->relworxCollectionCallback($request);
+        $this->walletRepository->relworxCollectionCallback($request);
     }
 
     public function relworxDisbursementCallback(Request $request)
     {
-        return $this->walletRepository->relworxDisbursementCallback($request);
+        $this->walletRepository->relworxDisbursementCallback($request);
     }
 
     public function relworxProductCallback(Request $request)
     {
-        return $this->walletRepository->relworxProductCallback($request);
+        $this->walletRepository->relworxProductCallback($request);
     }
 }

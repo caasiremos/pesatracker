@@ -245,7 +245,12 @@ class WalletRepository
 
     public function relworxCollectionCallback(Request $request)
     {
-        Logger::info('Relworx collection callback', $request->all());
+        Logger::info('Relworx collection callback', json_encode($request->all()));
+        $transactionLog = TransactionLog::where('telecom_transaction_id', $request->transaction_id)->first();
+        if ($transactionLog) {
+            $transactionLog->status = TransactionLog::STATUS_SUCCESS;
+            $transactionLog->save();
+        }
     }
 
     public function relworxDisbursementCallback(Request $request)
