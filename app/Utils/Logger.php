@@ -12,12 +12,23 @@ class Logger
      * Log any information needed to be logger for example,
      * Request Payload, Http Response, Debugging messages etc
      */
-    public static function info($message)
+    public static function info($message, $context = null)
     {
-        if (is_array($message)) {
-            $message = json_encode($message);
+        // Handle primary message
+        if (is_array($message) || is_object($message)) {
+            $message = json_encode($message, JSON_PRETTY_PRINT);
         }
-        Log::info($message);
+
+        // Handle context
+        $logMessage = $message;
+        if ($context !== null) {
+            $processedContext = is_scalar($context)
+                ? $context
+                : json_encode($context, JSON_PRETTY_PRINT);
+            $logMessage .= " | Context: " . $processedContext;
+        }
+
+        Log::info($logMessage);
     }
 
     /**
