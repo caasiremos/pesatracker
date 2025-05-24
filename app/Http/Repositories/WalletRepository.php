@@ -245,11 +245,21 @@ class WalletRepository
 
     public function relworxCollectionCallback(Request $request)
     {
-        Logger::info('Relworx collection callback', json_encode($request->all()));
-        $transactionLog = TransactionLog::where('telecom_transaction_id', $request->transaction_id)->first();
-        if ($transactionLog) {
-            $transactionLog->status = TransactionLog::STATUS_SUCCESS;
-            $transactionLog->save();
+        Logger::info('Relworx collection callback', $request->all());
+        if ($request->status === 'success') {
+            $walletTransaction = WalletTransaction::where('external_reference', $request->internal_reference)->first();
+            if ($walletTransaction) {
+                $walletTransaction->transaction_status = $request->status;
+                $walletTransaction->save();
+
+                $wallet = Wallet::where('customer_id', $walletTransaction->customer_id)->first();
+                if ($wallet) {
+                    $wallet->balance += $walletTransaction->amount;
+                    $wallet->save();
+                }
+            }
+        } else {
+            throw new ExpectedException('Failed initiating relworx collection');
         }
     }
 

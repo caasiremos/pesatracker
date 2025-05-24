@@ -58,10 +58,10 @@ class MobileMoney
                 $walletTransaction->transaction_status = $response['status'];
                 $walletTransaction->save();
 
-                $customer = Customer::where('customer_id', $walletTransaction->customer_id)->first();
-                if ($customer) {
-                    $customer->balance += $walletTransaction->amount;
-                    $customer->save();
+                $wallet = Wallet::where('customer_id', $walletTransaction->customer_id)->first();
+                if ($wallet) {
+                    $wallet->balance += $walletTransaction->amount;
+                    $wallet->save();
                 }
             }
         }
