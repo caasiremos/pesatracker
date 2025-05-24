@@ -11,6 +11,7 @@ use App\Payment\AirtelMoneyGateWay;
 use App\Payment\MtnMomoGateWay;
 use App\Payment\Relworx\MobileMoney;
 use App\Utils\Logger;
+use App\Utils\Money;
 use App\Utils\PhoneNumberUtil;
 use App\Utils\SMS;
 use Illuminate\Http\Request;
@@ -247,17 +248,31 @@ class WalletRepository
     {
         Logger::info('Relworx collection callback', $request->all());
         if ($request->status === 'success') {
-            $walletTransaction = WalletTransaction::where('transaction_reference', $request->customer_reference)->first();
-            if ($walletTransaction) {
-                $walletTransaction->transaction_status = $request->status;
-                $walletTransaction->save();
+            DB::beginTransaction();
+            try {
+                $walletTransaction = WalletTransaction::where('transaction_reference', $request->customer_reference)->first();
+                if ($walletTransaction) {
+                    $walletTransaction->transaction_status = $request->status;
+                    $walletTransaction->save();
 
-                $wallet = Wallet::where('customer_id', $walletTransaction->customer_id)->first();
-            
-                if ($wallet) {
-                    $wallet->balance += $request->amount;
-                    $wallet->save();
+                    $wallet = Wallet::where('customer_id', $walletTransaction->customer_id)->first();
+                
+                    if ($wallet) {
+                        $wallet->balance += $request->amount;
+                        $wallet->save();
+                        $wallet->refresh();
+                        DB::commit();
+                        $formattedAmount = Money::formatAmount($request->amount);
+                        SMS::send($walletTransaction->customer->phone_number, "Your Pesatrack app wallet deposit of {$formattedAmount} was successful.");
+                    } else {
+                        throw new ExpectedException('Wallet not found for customer');
+                    }
+                } else {
+                    throw new ExpectedException('Transaction not found');
                 }
+            } catch (Throwable $throwable) {
+                DB::rollBack();
+                throw $throwable;
             }
         } else {
             throw new ExpectedException('Failed initiating relworx collection');

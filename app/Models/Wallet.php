@@ -26,10 +26,10 @@ class Wallet extends Model
         });
     }
 
-    public function getBalanceAttribute($value)
-    {
-        return Money::formatAmount($value);
-    }
+    // public function getBalanceAttribute($value)
+    // {
+    //     return Money::formatAmount($value);
+    // }
 
     /**
      * Get the customer that owns the wallet.

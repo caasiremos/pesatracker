@@ -45,8 +45,8 @@ class WalletTransaction extends Model
         return $this->belongsTo(Wallet::class);
     }
 
-    public function getAmountAttribute($value)
-    {
-        return Money::formatAmount($value);
-    }
+    // public function getAmountAttribute($value)
+    // {
+    //     return Money::formatAmount($value);
+    // }
 }
