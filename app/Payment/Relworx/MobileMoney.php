@@ -3,6 +3,7 @@
 namespace App\Payment\Relworx;
 
 use App\Models\Customer;
+use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Utils\Logger;
 use Illuminate\Support\Facades\Http;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Http;
 class MobileMoney
 {
     private const INITIATE_COLLECTION_URL = "https://payments.relworx.com/api/mobile-money/request-payment";
-    private const GET_TRANSACTION_STATUS_URL = "https://payments.relworx.com/api/mobile-money/check-request-status?internal_reference=";
+    private const GET_TRANSACTION_STATUS_URL = "https://payments.relworx.com/api/mobile-money/check-request-status";
     private $apiKey;
 
     public function __construct()
@@ -50,7 +51,10 @@ class MobileMoney
                     'Content-Type' => 'application/json',
                     'Authorization' => 'Bearer ' . $this->apiKey
                 ],
-            )->get(self::GET_TRANSACTION_STATUS_URL . $walletTransaction->external_reference)->json();
+            )->withQueryParams([
+                'internal_reference' => $walletTransaction->external_reference,
+                'account_no' => "REL08CACA5DDF"
+            ])->get(self::GET_TRANSACTION_STATUS_URL)->json();
 
             Logger::info('Relworx get transaction status response', $response);
 
