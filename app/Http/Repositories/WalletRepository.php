@@ -247,12 +247,14 @@ class WalletRepository
     {
         Logger::info('Relworx collection callback', $request->all());
         if ($request->status === 'success') {
-            $walletTransaction = WalletTransaction::where('external_reference', $request->internal_reference)->first();
+            $walletTransaction = WalletTransaction::where('transaction_reference', $request->customer_reference)->first();
+            dd($walletTransaction);
             if ($walletTransaction) {
                 $walletTransaction->transaction_status = $request->status;
                 $walletTransaction->save();
 
                 $wallet = Wallet::where('customer_id', $walletTransaction->customer_id)->first();
+                dd($wallet);
                 if ($wallet) {
                     $wallet->balance += $request->amount;
                     $wallet->save();
