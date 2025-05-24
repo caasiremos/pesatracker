@@ -248,7 +248,6 @@ class WalletRepository
         Logger::info('Relworx collection callback', $request->all());
         if ($request->status === 'success') {
             $walletTransaction = WalletTransaction::where('transaction_reference', $request->customer_reference)->first();
-            dd($walletTransaction);
             if ($walletTransaction) {
                 $walletTransaction->transaction_status = $request->status;
                 $walletTransaction->save();
