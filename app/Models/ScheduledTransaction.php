@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Relworx\Product;
 use App\Utils\Money;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,6 +11,10 @@ use Illuminate\Database\Eloquent\Model;
 class ScheduledTransaction extends Model
 {
     use HasFactory;
+
+    const STATUS_PENDING = 'pending';
+    const STATUS_SUCCESS = 'success';
+    const STATUS_FAILED = 'failed';
 
     protected $fillable = [
         'customer_id',
@@ -20,11 +25,7 @@ class ScheduledTransaction extends Model
         'frequency',
         'reference',
         'note',
-        'provider',
         'transaction_phone_number',
-        'transaction_reference',
-        'transaction_status',
-        'telecom_product'
     ];
 
     protected $casts = [
@@ -32,9 +33,13 @@ class ScheduledTransaction extends Model
         'amount' => 'integer',
     ];
 
-    public function getAmountAttribute($value)
+    public static function boot()
     {
-        return Money::formatAmount($value);
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->reference = 'REF-' . str_pad(self::count() + 1, 6, '0', STR_PAD_LEFT);
+        });
     }
 
     public function getPaymentDateAttribute($value)

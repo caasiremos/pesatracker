@@ -5,11 +5,43 @@ namespace App\Http\Repositories;
 use App\Models\CashExpense;
 use App\Models\Customer;
 use App\Models\ScheduledTransaction;
-use Illuminate\Console\Events\ScheduledTaskFailed;
+use App\Models\ScheduledTransactionLog;
+use App\Payment\Relworx\Products;
+use App\Utils\Logger;
+use App\Utils\Money;
+use App\Utils\SMS;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ScheduledTransactionRepository
 {
+    /**
+     * Get the business account number from the config
+     * 
+     * @return string
+     */
+    private static function accountNo()
+    {
+        return config('services.relworx.account_id');
+    }
+
+    /**
+     * Get a transaction reference
+     * 
+     * @return string
+     */
+    private static function transactionReference()
+    {
+        return Str::uuid();
+    }
+
+    /**
+     * Get customer scheduled transactions
+     * 
+     * @param Customer $customer
+     * @return array
+     */
     public function getCustomerScheduledTransactions(Customer $customer)
     {
         return ScheduledTransaction::query()
@@ -19,6 +51,13 @@ class ScheduledTransactionRepository
             ->get();
     }
 
+    /**
+     * Create a scheduled transaction
+     * 
+     * @param Request $request
+     * @param Customer $customer
+     * @return ScheduledTransaction     
+     */
     public function createScheduledTransaction(Request $request, Customer $customer)
     {
         return ScheduledTransaction::query()
@@ -36,6 +75,9 @@ class ScheduledTransactionRepository
 
     /**
      * Scheduled transactions like customer
+     * 
+     * @param Request $request
+     * @return array
      */
     public function getScheduledTransactions(Request $request)
     {
@@ -59,5 +101,166 @@ class ScheduledTransactionRepository
             'transactions' => $transactions,
             'filters' => ['search' => $search]
         ];
+    }
+
+    /**
+     * Run scheduled transactions that are due today
+     */
+    public function runScheduledTransactions()
+    {
+        $scheduledTransactions = ScheduledTransaction::where('payment_date', now()->toDateString())->get();
+
+        foreach ($scheduledTransactions as $transaction) {
+            if ($transaction->merchant->product->code == 'UMEME_PRE_PAID') {
+                $this->lightPayment($transaction);
+            }
+        }
+    }
+
+    /**
+     * Light payment
+     * 
+     * @param ScheduledTransaction $transaction
+     * @return void
+     */
+    private function lightPayment(ScheduledTransaction $transaction)
+    {
+        $reference = static::transactionReference();
+
+        $params = [
+            'account_no' => static::accountNo(),
+            'reference' => $reference,
+            'msisdn' => $transaction->merchant->code,
+            'amount' => $transaction->amount,
+            'product_code' => $transaction->merchant->product->code,
+            'contact_phone' => $transaction->transaction_phone_number,
+        ];
+
+        Logger::info($params);
+
+        // Create a transaction log
+        echo "Creating transaction log\n";
+        $this->createTransactionLog($transaction, $reference, ScheduledTransaction::STATUS_PENDING);
+
+        // Validate the product
+        echo "Validating product\n";
+        $validateProduct = (new Products())->validateProduct($params);
+
+        Logger::info($validateProduct);
+
+        if ($validateProduct['success']) {
+            $purchaseProductParams = [
+                "account_no" => static::accountNo(),
+                "validation_reference" => $validateProduct['validation_reference'],
+            ];
+            // Purchase the product
+            echo "Purchasing product\n";
+            $purchase = (new Products())->purchaseProduct($purchaseProductParams);
+
+            if ($purchase['success']) {
+                // Update the payment date
+                echo "Updating payment date\n";
+                $this->updatePaymentDate($transaction);
+                // Update the transaction log
+                echo "Updating transaction log\n";
+                $this->updateTransactionLog($reference, ScheduledTransaction::STATUS_SUCCESS, $purchase['internal_refence']);
+                // Deduct the amount from the customer's balance
+                echo "Deducting amount from customer balance\n";
+                $this->deductAmountFromCustomerBalance($transaction);
+                // Send an SMS
+                echo "Sending SMS\n";
+                $this->sendSms($transaction);
+            } else {
+                // Update the transaction log
+                echo "Updating transaction log\n";
+                $this->updateTransactionLog($reference, ScheduledTransaction::STATUS_FAILED, null);
+            }
+        }
+    }
+
+    /**
+     * Update the payment date
+     * 
+     * @param ScheduledTransaction $transaction
+     * @return void
+     */
+    private function updatePaymentDate(ScheduledTransaction $transaction)
+    {
+        $paymentDate = $transaction->payment_date;
+        if ($transaction->frequency == 'Monthly') {
+            $paymentDate = now()->addMonth()->toDateString();
+        } else if ($transaction->frequency == 'Weekly') {
+            $paymentDate = now()->addWeek()->toDateString();
+        } else {
+            $paymentDate = now()->addDay()->toDateString();
+        }
+
+        $transaction->payment_date = $paymentDate;
+        $transaction->save();
+    }
+
+    /**
+     * Create a transaction log
+     * 
+     * @param ScheduledTransaction $transaction
+     * @param string $reference
+     * @param string $status
+     * @return void
+     */
+    private function createTransactionLog(ScheduledTransaction $transaction, $reference, $status)
+    {
+        ScheduledTransactionLog::create([
+            'scheduled_transaction_id' => $transaction->id,
+            'status' => $status,
+            'amount' => $transaction->amount,
+            'scheduled_date' => Carbon::createFromFormat('d/m/Y', $transaction->payment_date)->format('Y-m-d'),
+            'internal_transaction_reference' => $reference,
+        ]);
+    }
+
+    /**
+     * Update the transaction log
+     * 
+     * @param string $reference
+     * @param string $status
+     * @param string $externalTransactionReference
+     * @return void
+     */
+    private function updateTransactionLog($reference, $status, $externalTransactionReference)
+    {
+        $transactionLog = ScheduledTransactionLog::where('internal_transaction_reference', $reference)->first();
+        $transactionLog->update([
+            'status' => $status,
+            'external_transaction_reference' => $externalTransactionReference,
+        ]);
+    }
+
+    /**
+     * Deduct the amount from the customer's balance
+     * 
+     * @param ScheduledTransaction $transaction
+     * @return void
+     */ 
+    private function deductAmountFromCustomerBalance(ScheduledTransaction $transaction)
+    {
+        $wallet = $transaction->customer->wallet;
+        $wallet->balance -= $transaction->amount;
+        $wallet->save();
+    }
+
+    /**
+     * Send an SMS
+     * 
+     * @param ScheduledTransaction $transaction
+     * @return void
+     */
+    private function sendSms(ScheduledTransaction $transaction)
+    {
+        $product = $transaction->merchant->name;
+        $amount = Money::formatAmount($transaction->amount);
+        $phone = $transaction->customer->phone_number;
+        $customer = $transaction->customer->name;
+        $message = "Dear {$customer}, your PesaTrack scheduled payment of {$amount} for {$product} has been deducted from your account on {$transaction->payment_date}. Thank you for using PesaTrack.";
+        SMS::send($phone, $message);
     }
 }

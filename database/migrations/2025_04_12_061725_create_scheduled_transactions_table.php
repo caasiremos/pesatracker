@@ -21,12 +21,7 @@ return new class extends Migration
             $table->string('frequency');
             $table->string('reference')->nullable();
             $table->string('note')->nullable();
-            $table->string('provider')->nullable();
             $table->string('transaction_phone_number')->nullable();
-            $table->string('transaction_reference')->nullable();
-            $table->string('transaction_status')->nullable();
-            $table->string('telecom_product')->nullable();
-            $table->date('next_payment_date')->nullable();
              $table->softDeletes();
             $table->timestamps();
         });

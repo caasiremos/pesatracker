@@ -13,6 +13,7 @@ class Products
     private const PRICE_LIST_URL = "https://payments.relworx.com/api/products/price-list";
     private const CHOICE_LIST_URL = "https://payments.relworx.com/api/products/choice-list";
     private const VALIDATE_PRODUCT_URL = "https://payments.relworx.com/api/products/validate";
+    private const PURCHASE_PRODUCT_URL = "https://payments.relworx.com/api/products/purchase";
     public string $apiKey;
 
     public function __construct()
@@ -100,7 +101,13 @@ class Products
         return $response;
     }
 
-    public function validateProduct(string $accountNumber, string $reference, string $msisdn, int $amount, string $productCode, string $contactPhone)
+    /**
+     * Validate a product
+     * 
+     * @param array $params
+     * @return array
+     */
+    public function validateProduct(array $params)
     {
         $response = Http::asJson()->withHeaders(
             [
@@ -109,14 +116,32 @@ class Products
                 'Authorization' => 'Bearer ' . $this->apiKey
             ],
         )->post(self::VALIDATE_PRODUCT_URL, [
-            'account_no' => $accountNumber,
-            'reference' => $reference,
-            'msisdn' => $msisdn,
-            'amount' => $amount,
-            'product_code' => $productCode,
-            'contact_phone' => $contactPhone
+            'account_no' => $params['account_no'],
+            'reference' => $params['reference'],
+            'msisdn' => $params['msisdn'],
+            'amount' => $params['amount'],
+            'product_code' => $params['product_code'],
+            'contact_phone' => $params['contact_phone']
         ])->json();
+        Logger::info($response);
+        return $response;
+    }
 
+    /**
+     * Purchase a product
+     * 
+     * @param array $params
+     * @return array
+     */
+    public function purchaseProduct(array $params)
+    {
+        $response = Http::asJson()->withHeaders(
+            [
+                'Accept' => 'application/vnd.relworx.v2',
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $this->apiKey
+            ],
+        )->post(self::PURCHASE_PRODUCT_URL, $params)->json();
         Logger::info($response);
         return $response;
     }

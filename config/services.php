@@ -53,6 +53,7 @@ return [
 
     'relworx' => [
         'api_key' => env('RELWOX_API_KEY'),
-        'account_id' => env('BUSSINESS_ACCOUNT')
+        'account_id' => env('RELWOX_BUSINESS_ACCOUNT'),
+        'api_url' => env('RELWOX_API_URL'),
     ],
 ];

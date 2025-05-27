@@ -1,50 +1,22 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Factories;
 
-use App\Models\Budget;
-use App\Models\CashExpense;
-use App\Models\Category;
-use App\Models\Customer;
-use App\Models\Feedback;
-use App\Models\Merchant;
-use App\Models\Relworx\Product;
-use App\Models\ScheduledTransaction;
-use App\Models\User;
-use App\Models\Wallet;
-use App\Models\WalletTransaction;
-use Database\Factories\ScheduledTransactionFactory;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use PHPUnit\TextUI\Configuration\Merger;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class DatabaseSeeder extends Seeder
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ */
+class ProductFactory extends Factory
 {
     /**
-     * Seed the application's database.
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
      */
-    public function run(): void
+    public function definition(): array
     {
-        User::factory()->create([
-            'name' => 'Aremo Isaac',
-            'email' => 'aremoisaac@gmail.com',
-        ]);
-
-        $this->createProducts();
-
-        Customer::factory(100)->create();
-        Category::factory(100)->create();
-        Merchant::factory(100)->create();
-        Budget::factory(100)->create();
-        ScheduledTransaction::factory(100)->create();
-        CashExpense::factory(100)->create();
-        Feedback::factory(100)->create();
-        Wallet::factory(100)->create();
-        WalletTransaction::factory(100)->create();
-    }
-
-    private function createProducts(){
-          $products = [
+        $products = [
             [
                 'name' => 'GOtv - Multichoice',
                 'code' => 'GO_TV',
@@ -167,8 +139,6 @@ class DatabaseSeeder extends Seeder
             ],
         ];
 
-        foreach ($products as $product) {
-            Product::create($product);
-        }
+        return $this->faker->randomElement($products);
     }
 }
