@@ -49,7 +49,11 @@ class MerchantRepository
 
     public function getProducts()
     {
-        return Product::query()->where('category', '!=', 'BANK_TRANSFERS')->get();
+        return Product::query()
+            ->with('priceList')
+            ->where('category', '!=', 'BANK_TRANSFERS')
+            ->where('has_price_list', 1)
+            ->get();
     }
 
     public function getPriceList(string $code)

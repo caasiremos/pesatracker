@@ -121,7 +121,8 @@ class Products
             'msisdn' => $params['msisdn'],
             'amount' => $params['amount'],
             'product_code' => $params['product_code'],
-            'contact_phone' => $params['contact_phone']
+            'contact_phone' => $params['contact_phone'],
+            'location_id' => $params['location_id']
         ])->json();
         Logger::info($response);
         return $response;

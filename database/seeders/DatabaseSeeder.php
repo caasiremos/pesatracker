@@ -8,11 +8,13 @@ use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Feedback;
 use App\Models\Merchant;
+use App\Models\PriceList;
 use App\Models\Relworx\Product;
 use App\Models\ScheduledTransaction;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
+use App\Payment\Relworx\Products;
 use Database\Factories\ScheduledTransactionFactory;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -20,31 +22,33 @@ use PHPUnit\TextUI\Configuration\Merger;
 
 class DatabaseSeeder extends Seeder
 {
+
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Aremo Isaac',
-            'email' => 'aremoisaac@gmail.com',
-        ]);
+        // User::factory()->create([
+        //     'name' => 'Aremo Isaac',
+        //     'email' => 'aremoisaac@gmail.com',
+        // ]);
 
-        $this->createProducts();
-
-        Customer::factory(100)->create();
-        Category::factory(100)->create();
-        Merchant::factory(100)->create();
-        Budget::factory(100)->create();
-        ScheduledTransaction::factory(100)->create();
-        CashExpense::factory(100)->create();
-        Feedback::factory(100)->create();
-        Wallet::factory(100)->create();
-        WalletTransaction::factory(100)->create();
+        //$this->createProducts();
+        $this->createPriceList();
+        // Customer::factory(100)->create();
+        // Category::factory(100)->create();
+        // Merchant::factory(100)->create();
+        // Budget::factory(100)->create();
+        // ScheduledTransaction::factory(100)->create();
+        // CashExpense::factory(100)->create();
+        // Feedback::factory(100)->create();
+        // Wallet::factory(100)->create();
+        // WalletTransaction::factory(100)->create();
     }
 
-    private function createProducts(){
-          $products = [
+    private function products()
+    {
+        return [
             [
                 'name' => 'GOtv - Multichoice',
                 'code' => 'GO_TV',
@@ -166,9 +170,33 @@ class DatabaseSeeder extends Seeder
                 'billable' => 1,
             ],
         ];
+    }
+
+    private function createProducts()
+    {
+        foreach ($this->products() as $product) {
+            Product::create($product);
+        }
+    }
+
+    private function createPriceList()
+    {
+        $products = Product::where('has_price_list', 1)->get();
 
         foreach ($products as $product) {
-            Product::create($product);
+            echo $product->code . "\n";
+            $priceList = (new Products())->getPriceList($product->code);
+            if ($priceList['success'] == true) {
+                foreach ($priceList['price_list'] as $price) {
+                    PriceList::updateOrCreate([
+                        'product_id' => $product->id,
+                        'code' => $price['code'],
+                    ], [
+                        'price' => $price['price'],
+                        "name" => $price['name'],
+                    ]);
+                }
+            }
         }
     }
 }
