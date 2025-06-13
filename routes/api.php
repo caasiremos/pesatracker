@@ -29,7 +29,7 @@ Route::prefix('customers')->controller(CustomerController::class)->group(functio
 
 Route::prefix('customers')->group(function () {
     Route::put('{customer}/update', [CustomerController::class, 'update']);
-
+    //0761484284 //odera 
     //Customer Categories
     Route::controller(CategoryController::class)->group(function () {
         Route::get('{customer}/categories', 'index');

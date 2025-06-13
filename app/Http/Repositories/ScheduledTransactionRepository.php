@@ -132,9 +132,25 @@ class ScheduledTransactionRepository
                     $this->sendInsufficientBalanceSms($transaction);
                 }
             }
-            if ($transaction->merchant->product->code == 'MTN_UG_AIRTIME' || $transaction->merchant->product->code == 'AIRTEL_UG_AIRTIME') {
+            if (
+                $transaction->merchant->product->code == 'MTN_UG_AIRTIME' ||
+                $transaction->merchant->product->code == 'AIRTEL_UG_AIRTIME' ||
+                $transaction->merchant->product->code == 'UTL_AIRTIME'
+            ) {
                 if ($this->checkCustomerBalance($transaction)) {
                     $this->airtimePayment($transaction);
+                } else {
+                    $this->sendInsufficientBalanceSms($transaction);
+                }
+            }
+
+            if (
+                $transaction->merchant->product->code == 'MTN_UG_INTERNET' ||
+                $transaction->merchant->product->code == 'AIRTEL_UG_INTERNET' ||
+                $transaction->merchant->product->code == 'ROKE_TELECOM_UG_INTERNET'
+            ) {
+                if ($this->checkCustomerBalance($transaction)) {
+                    $this->internetPayment($transaction);
                 } else {
                     $this->sendInsufficientBalanceSms($transaction);
                 }
@@ -204,6 +220,12 @@ class ScheduledTransactionRepository
         }
     }
 
+    /**
+     * Water payment
+     * 
+     * @param ScheduledTransaction $transaction
+     * @return void
+     */
     private function waterPayment(ScheduledTransaction $transaction)
     {
         $reference = static::transactionReference();
@@ -216,7 +238,7 @@ class ScheduledTransactionRepository
             'contact_phone' => $transaction->transaction_phone_number,
             "location_id" => 22632, //Location ID for Other National Water Areas
         ];
-      
+
         Logger::info($params);
 
         // Create a transaction log
@@ -244,7 +266,7 @@ class ScheduledTransactionRepository
                 $this->updateTransactionLog($reference, ScheduledTransaction::STATUS_SUCCESS, $purchase['internal_refence']);
                 // Deduct the amount from the customer's balance
                 echo "Deducting amount from customer balance\n";
-                $this->deductAmountFromCustomerBalance($transaction);  
+                $this->deductAmountFromCustomerBalance($transaction);
                 // Send an SMS
                 echo "Sending SMS\n";
                 $this->sendSms($transaction);
@@ -259,6 +281,12 @@ class ScheduledTransactionRepository
         }
     }
 
+    /**
+     * Voice bundles payment
+     * 
+     * @param ScheduledTransaction $transaction
+     * @return void
+     */
     private function voiceBundlesPayment(ScheduledTransaction $transaction)
     {
         $reference = static::transactionReference();
@@ -271,13 +299,13 @@ class ScheduledTransactionRepository
             'contact_phone' => $transaction->transaction_phone_number,
             'location_id' => "",
         ];
-        
+
         Logger::info($params);
 
         // Create a transaction log
         echo "Creating transaction log\n";
         $this->createTransactionLog($transaction, $reference, ScheduledTransaction::STATUS_PENDING);
-        
+
         // Validate the product
         echo "Validating product\n";
         $validateProduct = (new Products())->validateProduct($params);
@@ -313,6 +341,12 @@ class ScheduledTransactionRepository
         }
     }
 
+    /**
+     * Airtime payment
+     * 
+     * @param ScheduledTransaction $transaction
+     * @return void
+     */
     private function airtimePayment(ScheduledTransaction $transaction)
     {
         $reference = static::transactionReference();
@@ -335,7 +369,68 @@ class ScheduledTransactionRepository
         // Validate the product
         echo "Validating product\n";
         $validateProduct = (new Products())->validateProduct($params);
-        
+
+        Logger::info($validateProduct);
+
+        if ($validateProduct['success']) {
+            $purchaseProductParams = [
+                "account_no" => static::accountNo(),
+                "validation_reference" => $validateProduct['validation_reference'],
+            ];
+            // Purchase the product
+            echo "Purchasing product\n";
+            $purchase = (new Products())->purchaseProduct($purchaseProductParams);
+
+            if ($purchase['success']) {
+                // Update the transaction log
+                echo "Updating transaction log\n";
+                $this->updateTransactionLog($reference, ScheduledTransaction::STATUS_SUCCESS, $purchase['internal_refence']);
+                // Deduct the amount from the customer's balance
+                echo "Deducting amount from customer balance\n";
+                $this->deductAmountFromCustomerBalance($transaction);
+                // Send an SMS
+                echo "Sending SMS\n";
+                $this->sendSms($transaction);
+                // Update the payment date
+                echo "Updating payment date\n";
+                $this->updatePaymentDate($transaction);
+            } else {
+                // Update the transaction log
+                echo "Updating transaction log\n";
+                $this->updateTransactionLog($reference, ScheduledTransaction::STATUS_FAILED, null);
+            }
+        }
+    }
+
+    /**
+     * Internet payment
+     * 
+     * @param ScheduledTransaction $transaction
+     * @return void
+     */
+    private function internetPayment(ScheduledTransaction $transaction)
+    {
+        $reference = static::transactionReference();
+        $params = [
+            'account_no' => static::accountNo(),
+            'reference' => $reference,
+            'msisdn' => $transaction->transaction_phone_number,
+            'amount' => $transaction->amount,
+            'product_code' => $transaction->merchant->code,
+            'contact_phone' => $transaction->transaction_phone_number,
+            'location_id' => "",
+        ];
+
+        Logger::info($params);
+
+        // Create a transaction log
+        echo "Creating transaction log\n";
+        $this->createTransactionLog($transaction, $reference, ScheduledTransaction::STATUS_PENDING);
+
+        // Validate the product
+        echo "Validating product\n";
+        $validateProduct = (new Products())->validateProduct($params);
+
         Logger::info($validateProduct);
 
         if ($validateProduct['success']) {
@@ -430,7 +525,7 @@ class ScheduledTransactionRepository
      * 
      * @param ScheduledTransaction $transaction
      * @return void
-     */ 
+     */
     private function deductAmountFromCustomerBalance(ScheduledTransaction $transaction)
     {
         $wallet = $transaction->customer->wallet;

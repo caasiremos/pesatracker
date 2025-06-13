@@ -11,7 +11,7 @@ class CategoryRepository
     public function getCustomerCategories(Customer $customer)
     {
         return Category::query()
-            ->select('name')
+            ->select('id', 'name')
             ->where('customer_id', $customer->id)->get();
     }
 

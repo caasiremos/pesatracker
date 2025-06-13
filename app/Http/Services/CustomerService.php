@@ -71,7 +71,7 @@ class CustomerService
             $data = [
                 'access_token' => $token,
                 'token_type' => 'Bearer',
-                'agent' => $customer->only('name', 'email', 'phone_number', 'status'),
+                'customer' => $customer->only('id', 'name', 'email', 'phone_number', 'status'),
             ];
             return $data;
         } catch (ExpectedException $expectedException) {
