@@ -16,7 +16,7 @@ class MerchantRepository
     {
         return Merchant::query()
             ->with('product')
-            ->select('name')
+            ->select('id', 'name', 'product_id', 'customer_id')
             ->where('customer_id', $customer->id)->get();
     }
 
