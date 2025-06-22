@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'aremoisaac@gmail.com',
         // ]);
 
-        //$this->createProducts();
+        $this->createProducts();
         $this->createPriceList();
         // Customer::factory(100)->create();
         // Category::factory(100)->create();
