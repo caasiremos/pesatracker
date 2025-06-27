@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
 use App\Models\Customer;
 use App\Models\Otp;
+use App\Utils\Logger;
 use App\Utils\SMS;
 use Illuminate\Support\Facades\Hash;
 use Throwable;
@@ -101,6 +102,7 @@ class CustomerService
      */
     public function verifyOtp(Request $request): bool
     {
+        Logger::info("verifyOtp", $request->all());
         try {
             $otp = Otp::query()
                 ->where('phone_number', $request->phone_number)
