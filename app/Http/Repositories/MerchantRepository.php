@@ -52,7 +52,7 @@ class MerchantRepository
         return Product::query()
             ->with('priceList')
             ->where('category', '!=', 'BANK_TRANSFERS')
-            ->where('has_price_list', 1)
+            //->where('has_price_list', 1)
             ->get();
     }
 
