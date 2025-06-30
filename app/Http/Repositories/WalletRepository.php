@@ -26,7 +26,7 @@ class WalletRepository
     public function getWalletDetails(Customer $customer)
     {
         return Wallet::query()
-            ->select('customer_id', 'wallet_identifier', 'balance')
+            ->select('customer_id', 'wallet_identifier', 'balance', 'created_at', 'updated_at')
             ->where('customer_id', $customer->id)
             ->first();
     }
