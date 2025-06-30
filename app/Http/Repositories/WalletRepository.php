@@ -27,7 +27,7 @@ class WalletRepository
     {
         return Wallet::query()
             ->select('customer_id', 'wallet_identifier', 'balance')
-            ->first('customer_id', $customer->id)
+            ->where('customer_id', $customer->id)
             ->first();
     }
 
