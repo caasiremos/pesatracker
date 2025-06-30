@@ -6,8 +6,17 @@ use App\Models\CashExpense;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 
+/**
+ * Cash expense transaction repository
+ */
 class CashExpenseTransactionRepository
 {
+    /**
+     * Get all cash expense transactions for a customer
+     *
+     * @param  Customer  $customer - customer
+     * @return Collection
+     */
     public function getCustomerCashExpenseTransactions(Customer $customer)
     {
         return CashExpense::query()
@@ -17,6 +26,13 @@ class CashExpenseTransactionRepository
             ->get();
     }
 
+    /**
+     * Create a new cash expense transaction
+     *
+     * @param  Request  $request - params
+     * @param  Customer  $customer - customer
+     * @return CashExpense
+     */
     public function createCashExpenseTransaction(Request $request, Customer $customer)
     {
         return CashExpense::query()
@@ -49,7 +65,10 @@ class CashExpenseTransactionRepository
     }
 
     /**
-     * Scheduled transactions like customer
+     * Get cash expense transactions
+     *
+     * @param  Request  $request - params
+     * @return array
      */
     public function getCashExpenseTransactions(Request $request)
     {
