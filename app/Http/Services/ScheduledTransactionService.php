@@ -61,4 +61,33 @@ class ScheduledTransactionService
             throw $throwable;
         }
     }
+
+    /**
+     * Get upcoming scheduled transactions count
+     * 
+     * @param Customer $customer
+     * @return array
+     */
+    public function upcomingScheduledTransactionsCountByDate(Customer $customer)
+    {
+        try {
+            return $this->scheduledTransaction->getUpcomingScheduledTransactionsCountByDate($customer);
+        } catch (ExpectedException $expectedException) {
+            throw $expectedException;
+        } catch (Throwable $throwable) {
+            throw $throwable;
+        }
+    }
+
+    /**
+     * Get upcoming scheduled transactions by date
+     * 
+     * @param Request $request
+     * @param Customer $customer
+     * @return array
+     */
+    public function upcomingScheduledTransactionsByDate(Request $request, Customer $customer)
+    {
+        return $this->scheduledTransaction->getUpcomingTransactionsByDate($request, $customer);
+    }
 }

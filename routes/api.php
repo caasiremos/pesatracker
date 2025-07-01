@@ -73,6 +73,8 @@ Route::prefix('customers')->group(function () {
     Route::controller(ScheduledTransactionController::class)->group(function () {
         Route::get('{customer}/scheduled-transactions', 'index');
         Route::post('{customer}/scheduled-transactions', 'store');
+        Route::get('{customer}/scheduled-transactions/upcoming/count', 'upcomingScheduledTransactionsCountByDate');
+        Route::get('{customer}/scheduled-transactions/upcoming', 'upcomingScheduledTransactionsByDate');
     });
 
     //Customer Wallet

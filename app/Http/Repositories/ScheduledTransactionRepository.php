@@ -51,6 +51,39 @@ class ScheduledTransactionRepository
             ->get();
     }
 
+    public function getUpcomingScheduledTransactionsCountByDate(Customer $customer)
+    {
+        return ScheduledTransaction::query()
+            ->selectRaw('payment_date, COUNT(*) as count')
+            ->where('customer_id', $customer->id)
+            ->groupBy('payment_date')
+            ->orderBy('payment_date')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'date' => $item->payment_date,
+                    'count' => $item->count,
+                ];
+            })
+            ->values();
+    }
+
+    /**
+     * Get upcoming transactions by date
+     * 
+     * @param Request $request
+     * @param Customer $customer
+     * @return array
+     */
+    public function getUpcomingTransactionsByDate(Request $request, Customer $customer)
+    {
+        $date = Carbon::createFromFormat('d/m/Y', $request->payment_date)->format('Y-m-d');
+        return ScheduledTransaction::query()
+            ->where('customer_id', $customer->id)
+            ->where('payment_date', $date)
+            ->get();
+    }
+
     /**
      * Create a scheduled transaction
      * 

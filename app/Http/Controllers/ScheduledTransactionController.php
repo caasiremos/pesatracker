@@ -39,6 +39,49 @@ class ScheduledTransactionController extends Controller
         }
     }
 
+    /**
+     * Get upcoming scheduled transactions count by date
+     * 
+     * @param Customer $customer
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
+    public function upcomingScheduledTransactionsCountByDate(Customer $customer): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $customer = $this->scheduledTransactionService->upcomingScheduledTransactionsCountByDate($customer);
+            return new ApiSuccessResponse($customer, "Upcoming Scheduled Transactions Retrieved Successful.");
+        } catch (ExpectedException $expectedException) {
+            return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
+    /**
+     * Get upcoming scheduled transactions by date
+     * 
+     * @param Request $request
+     * @param Customer $customer
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
+    public function upcomingScheduledTransactionsByDate(Request $request, Customer $customer): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $customer = $this->scheduledTransactionService->upcomingScheduledTransactionsByDate($request, $customer);
+            return new ApiSuccessResponse($customer, "Upcoming Scheduled Transactions Retrieved Successful.");
+        } catch (ExpectedException $expectedException) {
+            return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
+    /**
+     * Get scheduled transactions
+     * 
+     * @param Request $request
+     * @return Inertia\Response
+     */
     public function scheduledTransactions(Request $request)
     {
         $data = $this->scheduledTransactionService->getScheduledTransactions($request);
