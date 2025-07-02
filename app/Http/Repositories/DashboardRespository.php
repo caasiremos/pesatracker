@@ -5,6 +5,7 @@ namespace App\Http\Repositories;
 use App\Models\Customer;
 use App\Models\Feedback;
 use App\Models\ScheduledTransaction;
+use App\Models\ScheduledTransactionLog;
 use App\Models\User;
 use App\Models\WalletTransaction;
 
@@ -53,9 +54,8 @@ class DashboardRespository
 
     public function failedScheduledTransactionCount()
     {
-        return ScheduledTransaction::query()
-            ->with('customer')
-            ->where('transaction_status', 'failed')
+        return ScheduledTransactionLog::query()
+            ->where('status', ScheduledTransactionLog::STATUS_FAILED)
             ->count();
     }
 
@@ -69,9 +69,8 @@ class DashboardRespository
 
     public function successfulScheduledTransactionCount()
     {
-        return ScheduledTransaction::query()
-            ->with('customer')
-            ->where('transaction_status', 'completed')
+        return ScheduledTransactionLog::query()
+            ->where('status', ScheduledTransactionLog::STATUS_SUCCESS)
             ->count();
     }
 
