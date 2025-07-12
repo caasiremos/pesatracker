@@ -41,17 +41,11 @@ class ScheduledTransactionService
                         }
                     },
                 ],
-                 'merchant_id' => [
+                'product_id' => [
                     'required',
-                    'exists:merchants,id',
-                    // Add a custom rule to verify the category belongs to the customer
-                    function ($attribute, $value, $fail) use ($customer) {
-                        $merchantExists = $customer->merchants()->where('id', $value)->exists();
-                        if (!$merchantExists) {
-                            $fail('The selected merchant does not belong to this customer.');
-                        }
-                    },
-                ]
+                    'exists:products,id',
+                ],
+                'code' => 'required|string',
             ]);
 
             return $this->scheduledTransaction->createScheduledTransaction($request, $customer);

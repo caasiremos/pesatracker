@@ -15,13 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('customer_id')->index()->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->index()->constrained()->onDelete('cascade');
-            $table->foreignId('merchant_id')->index()->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->index()->constrained()->onDelete('cascade');
             $table->string('code');
             $table->integer('amount');
             $table->date('payment_date');
             $table->string('frequency');
-            $table->string('reference')->nullable();
             $table->string('note')->nullable();
             $table->string('transaction_phone_number')->nullable();
              $table->softDeletes();

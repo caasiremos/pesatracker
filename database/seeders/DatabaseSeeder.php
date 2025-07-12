@@ -169,6 +169,22 @@ class DatabaseSeeder extends Seeder
                 'has_choice_list' => 0,
                 'billable' => 1,
             ],
+            [
+                'name' => 'Airtel Money',
+                'code' => 'AIRTEL_MONEY',
+                'category' => 'OTHERS',
+                'has_price_list' => 0,
+                'has_choice_list' => 0,
+                'billable' => 1,
+            ],
+             [
+                'name' => 'MTN Mobile Money',
+                'code' => 'MTN_MONEY',
+                'category' => 'OTHERS',
+                'has_price_list' => 0,
+                'has_choice_list' => 0,
+                'billable' => 1,
+            ],
         ];
     }
 

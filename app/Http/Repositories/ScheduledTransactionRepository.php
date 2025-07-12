@@ -108,8 +108,8 @@ class ScheduledTransactionRepository
                 'amount' => $request->amount,
                 'payment_date' => $request->payment_date,
                 'frequency' => $request->frequency,
-                'reference' => $request->frequency,
                 'note' => $request->note,
+                'transaction_phone_number' => $customer->phone_number,
             ]);
     }
 

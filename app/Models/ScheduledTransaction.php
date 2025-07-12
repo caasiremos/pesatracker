@@ -19,11 +19,11 @@ class ScheduledTransaction extends Model
     protected $fillable = [
         'customer_id',
         'category_id',
-        'merchant_id',
+        'product_id',
+        'code',
         'amount',
         'payment_date',
         'frequency',
-        'reference',
         'note',
         'transaction_phone_number',
     ];
@@ -32,15 +32,6 @@ class ScheduledTransaction extends Model
         'payment_date' => 'datetime',
         'amount' => 'integer',
     ];
-
-    public static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $model->reference = 'REF-' . str_pad(self::count() + 1, 6, '0', STR_PAD_LEFT);
-        });
-    }
 
     public function getPaymentDateAttribute($value)
     {
