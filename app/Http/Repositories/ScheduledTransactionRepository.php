@@ -151,21 +151,21 @@ class ScheduledTransactionRepository
         $scheduledTransactions = ScheduledTransaction::where('payment_date', now()->toDateString())->get();
 
         foreach ($scheduledTransactions as $transaction) {
-            if ($transaction->merchant->product->code == 'UMEME_PRE_PAID') {
+            if ($transaction->product->code == 'UMEME_PRE_PAID') {
                 if ($this->checkCustomerBalance($transaction)) {
                     $this->lightPayment($transaction);
                 } else {
                     $this->sendInsufficientBalanceSms($transaction);
                 }
             }
-            if ($transaction->merchant->product->code == 'NATIONAL_WATER') {
+            if ($transaction->product->code == 'NATIONAL_WATER') {
                 if ($this->checkCustomerBalance($transaction)) {
                     $this->waterPayment($transaction);
                 } else {
                     $this->sendInsufficientBalanceSms($transaction);
                 }
             }
-            if ($transaction->merchant->product->code == 'MTN_UG_VOICE_BUNDLES' || $transaction->merchant->product->code == 'AIRTEL_UG_VOICE_BUNDLES') {
+            if ($transaction->product->code == 'MTN_UG_VOICE_BUNDLES' || $transaction->product->code == 'AIRTEL_UG_VOICE_BUNDLES') {
                 if ($this->checkCustomerBalance($transaction)) {
                     $this->voiceBundlesPayment($transaction);
                 } else {
@@ -173,9 +173,9 @@ class ScheduledTransactionRepository
                 }
             }
             if (
-                $transaction->merchant->product->code == 'MTN_UG_AIRTIME' ||
-                $transaction->merchant->product->code == 'AIRTEL_UG_AIRTIME' ||
-                $transaction->merchant->product->code == 'UTL_AIRTIME'
+                $transaction->product->code == 'MTN_UG_AIRTIME' ||
+                $transaction->product->code == 'AIRTEL_UG_AIRTIME' ||
+                $transaction->product->code == 'UTL_AIRTIME'
             ) {
                 if ($this->checkCustomerBalance($transaction)) {
                     $this->airtimePayment($transaction);
@@ -185,9 +185,9 @@ class ScheduledTransactionRepository
             }
 
             if (
-                $transaction->merchant->product->code == 'MTN_UG_INTERNET' ||
-                $transaction->merchant->product->code == 'AIRTEL_UG_INTERNET' ||
-                $transaction->merchant->product->code == 'ROKE_TELECOM_UG_INTERNET'
+                $transaction->product->code == 'MTN_UG_INTERNET' ||
+                $transaction->product->code == 'AIRTEL_UG_INTERNET' ||
+                $transaction->product->code == 'ROKE_TELECOM_UG_INTERNET'
             ) {
                 if ($this->checkCustomerBalance($transaction)) {
                     $this->internetPayment($transaction);
@@ -211,7 +211,7 @@ class ScheduledTransactionRepository
         $params = [
             'account_no' => static::accountNo(),
             'reference' => $reference,
-            'msisdn' => $transaction->merchant->code,
+            'msisdn' => $transaction->code,
             'amount' => $transaction->amount,
             'product_code' => $transaction->code,
             'contact_phone' => $transaction->transaction_phone_number,
@@ -516,8 +516,14 @@ class ScheduledTransactionRepository
             $paymentDate = now()->addMonth()->toDateString();
         } else if ($transaction->frequency == 'Weekly') {
             $paymentDate = now()->addWeek()->toDateString();
-        } else {
+        } else if ($transaction->frequency == 'Daily') {
             $paymentDate = now()->addDay()->toDateString();
+        } else if ($transaction->frequency == 'Yearly') {
+            $paymentDate = now()->addYear()->toDateString();
+        } else if ($transaction->frequency == 'Quarterly') {
+            $paymentDate = now()->addQuarter()->toDateString();
+        } else {
+            $paymentDate = now()->addMonth()->toDateString();
         }
 
         $transaction->payment_date = $paymentDate;
@@ -581,7 +587,7 @@ class ScheduledTransactionRepository
      */
     private function sendSms(ScheduledTransaction $transaction)
     {
-        $product = $transaction->merchant->name;
+        $product = $transaction->product->name;
         $amount = Money::formatAmount($transaction->amount);
         $phone = $transaction->customer->phone_number;
         $customer = $transaction->customer->name;
@@ -609,7 +615,7 @@ class ScheduledTransactionRepository
      */
     private function sendInsufficientBalanceSms(ScheduledTransaction $transaction)
     {
-        $product = $transaction->merchant->name;
+        $product = $transaction->product->name;
         $amount = Money::formatAmount($transaction->amount);
         $phone = $transaction->customer->phone_number;
         $customer = $transaction->customer->name;

@@ -23,6 +23,12 @@ class WalletRepository
 {
     public function __construct(private MobileMoney $mobileMoney) {}
 
+    /**
+     * Get wallet details
+     * 
+     * @param Customer $customer
+     * @return Wallet
+     */
     public function getWalletDetails(Customer $customer)
     {
         return Wallet::query()
@@ -38,6 +44,13 @@ class WalletRepository
         return $walletTransactions;
     }
 
+    /**
+     * Initiate telecom collection
+     * 
+     * @param Request $request
+     * @param Customer $customer
+     * @return WalletTransaction
+     */
     private function initiateTelecomCollection(Request $request, Customer $customer)
     {
         $walletTransactions = WalletTransaction::query()
@@ -59,6 +72,12 @@ class WalletRepository
         return $walletTransactions;
     }
 
+    /**
+     * Get customer wallets
+     * 
+     * @param Request $request
+     * @return array
+     */
     public function getCustomerWallets(Request $request)
     {
         $search = $request->input('search');
@@ -84,7 +103,10 @@ class WalletRepository
     }
 
     /**
-     * Wallet transactions like customer
+     * Get wallet transactions
+     * 
+     * @param Request $request
+     * @return array
      */
     public function getWalletTransactions(Request $request)
     {
@@ -133,7 +155,8 @@ class WalletRepository
     /**
      * Initiate mtn mobile money collection
      *
-     * @throws Exception
+     * @param Request $request
+     * @param Customer $customer
      */
     public function initiateMtnCollection(Request $request, Customer $customer)
     {
@@ -149,9 +172,14 @@ class WalletRepository
     }
 
     /**
-     * Log transaction before sending to mtn or airtel
-     *
-     * @throws Exception
+     * Save transaction logs
+     * 
+     * @param Request $request
+     * @param string $transaction_id
+     * @param Customer $customer
+     * @param string $provider
+     * @param string $telecom_product
+     * @return TransactionLog
      */
     private function saveTransactionLogs(
         Request $request,
@@ -168,6 +196,11 @@ class WalletRepository
         ]));
     }
 
+    /**
+     * Mtn callback
+     * 
+     * @param Request $request
+     */
     public function mtnCallback(Request $request)
     {
         DB::beginTransaction();
@@ -186,8 +219,9 @@ class WalletRepository
     }
 
     /**
-     * Airtel Money callback
-     *
+     * Airtel callback
+     * 
+     * @param Request $request
      */
     public function airtelCallback(Request $request)
     {
@@ -207,6 +241,11 @@ class WalletRepository
         }
     }
 
+    /**
+     * Update wallet balance
+     * 
+     * @param TransactionLog $transactionLog
+     */
     private function updateWalletBalance(TransactionLog $transactionLog)
     {
         $wallet = Wallet::query()->where('customer_id', $transactionLog->customer_id)->first();
@@ -214,6 +253,12 @@ class WalletRepository
         $wallet->save();
     }
 
+    /**
+     * Update transaction log
+     * 
+     * @param TransactionLog $transaction_log
+     * @return bool
+     */
     private function updateTransactionLog($transaction_log): bool
     {
         $transaction_log->status = TransactionLog::STATUS_SUCCESS;
@@ -221,10 +266,18 @@ class WalletRepository
         return true;
     }
 
+    /**
+     * Initiate relworx collection
+     * 
+     * @param Request $request
+     * @param Customer $customer
+     * @return WalletTransaction
+     */
     private function initiateRelworxCollection(Request $request, Customer $customer)
     {
         $reference = Str::uuid();
         $response = $this->mobileMoney->initiateCollection($reference, $request->phone_number, $request->amount);
+        Logger::info('Relworx collection response', $response);
         if ($response['success'] === true) {
             $this->saveTransactionLogs($request, $response['internal_reference'], $customer, 'relworx', 'relworx collection');
             //create wallet transaction
@@ -244,6 +297,11 @@ class WalletRepository
         }
     }
 
+    /**
+     * Relworx collection callback
+     * 
+     * @param Request $request
+     */
     public function relworxCollectionCallback(Request $request)
     {
         Logger::info('Relworx collection callback', $request->all());
@@ -279,11 +337,21 @@ class WalletRepository
         }
     }
 
+    /**
+     * Relworx disbursement callback
+     * 
+     * @param Request $request
+     */
     public function relworxDisbursementCallback(Request $request)
     {
         Logger::info('Relworx disbursement callback', $request->all());
     }
 
+    /**
+     * Relworx product callback
+     * 
+     * @param Request $request
+     */
     public function relworxProductCallback(Request $request)
     {
         Logger::info('Relworx product callback', $request->all());
