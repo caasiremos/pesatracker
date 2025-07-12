@@ -58,9 +58,9 @@ class ScheduledTransaction extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function merchant()
+    public function product()
     {
-        return $this->belongsTo(Merchant::class);
+        return $this->belongsTo(Product::class);
     }
 
     public function wallet()

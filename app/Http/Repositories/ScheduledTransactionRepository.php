@@ -45,12 +45,18 @@ class ScheduledTransactionRepository
     public function getCustomerScheduledTransactions(Customer $customer)
     {
         return ScheduledTransaction::query()
-            ->with('category:id,name', 'merchant:id,name')
-            ->select(['id', 'amount', 'category_id', 'merchant_id'])
+            ->with('category:id,name', 'product:id,name,code')
+            ->select(['id', 'amount', 'category_id', 'product_id', 'code'])
             ->where('customer_id', $customer->id)
             ->get();
     }
 
+    /**
+     * Get upcoming scheduled transactions count by date
+     * 
+     * @param Customer $customer
+     * @return array
+     */
     public function getUpcomingScheduledTransactionsCountByDate(Customer $customer)
     {
         return ScheduledTransaction::query()
@@ -96,7 +102,8 @@ class ScheduledTransactionRepository
         return ScheduledTransaction::query()
             ->create([
                 'category_id' => $request->category_id,
-                'merchant_id' => $request->merchant_id,
+                'product_id' => $request->product_id,
+                'code' => $request->code,
                 'customer_id' => $customer->id,
                 'amount' => $request->amount,
                 'payment_date' => $request->payment_date,
@@ -117,7 +124,7 @@ class ScheduledTransactionRepository
         $search = $request->input('search');
 
         $transactions = ScheduledTransaction::query()
-            ->with('customer', 'merchant', 'category')
+            ->with('customer', 'product', 'category')
             ->when($search, function ($query, $search) {
                 $query->where(function ($query) use ($search) {
                     $query->orWhereHas('customer', function ($q) use ($search) {
@@ -206,7 +213,7 @@ class ScheduledTransactionRepository
             'reference' => $reference,
             'msisdn' => $transaction->merchant->code,
             'amount' => $transaction->amount,
-            'product_code' => $transaction->merchant->product->code,
+            'product_code' => $transaction->code,
             'contact_phone' => $transaction->transaction_phone_number,
             'location_id' => null
         ];
@@ -265,9 +272,9 @@ class ScheduledTransactionRepository
         $params = [
             'account_no' => static::accountNo(),
             'reference' => $reference,
-            'msisdn' => $transaction->merchant->code,
+            'msisdn' => $transaction->code,
             'amount' => $transaction->amount,
-            'product_code' => $transaction->merchant->product->code,
+            'product_code' => $transaction->product->code,
             'contact_phone' => $transaction->transaction_phone_number,
             "location_id" => 22632, //Location ID for Other National Water Areas
         ];
@@ -328,7 +335,7 @@ class ScheduledTransactionRepository
             'reference' => $reference,
             'msisdn' => $transaction->transaction_phone_number,
             'amount' => $transaction->amount,
-            'product_code' => $transaction->merchant->code,
+            'product_code' => $transaction->product->code,
             'contact_phone' => $transaction->transaction_phone_number,
             'location_id' => "",
         ];
@@ -388,7 +395,7 @@ class ScheduledTransactionRepository
             'reference' => $reference,
             'msisdn' => $transaction->transaction_phone_number,
             'amount' => $transaction->amount,
-            'product_code' => $transaction->merchant->product->code,
+            'product_code' => $transaction->product->code,
             'contact_phone' => $transaction->transaction_phone_number,
             'location_id' => "",
         ];
@@ -449,7 +456,7 @@ class ScheduledTransactionRepository
             'reference' => $reference,
             'msisdn' => $transaction->transaction_phone_number,
             'amount' => $transaction->amount,
-            'product_code' => $transaction->merchant->code,
+            'product_code' => $transaction->code,
             'contact_phone' => $transaction->transaction_phone_number,
             'location_id' => "",
         ];

@@ -7,7 +7,7 @@ use App\Http\Controllers\CashExpenseTransactionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FeedbackController;
-use App\Http\Controllers\MerchantController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\MtnMomoCallbackController;
 use App\Http\Controllers\ScheduledTransactionController;
 use App\Http\Controllers\WalletController;
@@ -38,12 +38,8 @@ Route::prefix('customers')->group(function () {
         Route::delete('{customer}/categories/{category}/delete', 'destroy');
     });
 
-    //Customer Merchants
-    Route::controller(MerchantController::class)->group(function () {
-        Route::get('{customer}/merchants', 'index');
-        Route::post('{customer}/merchants', 'store');
-        Route::put('{customer}/merchants/{merchant}/update', 'update');
-        Route::delete('{customer}/merchants/{merchant}/delete', 'destroy');
+    //Customer Products
+    Route::controller(ProductController::class)->group(function () {
         Route::get('products', 'getProducts');
         Route::get('products/price-list', 'getPriceList');
         Route::get('products/choice-list', 'getChoiceList');
