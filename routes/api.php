@@ -29,7 +29,6 @@ Route::prefix('customers')->controller(CustomerController::class)->group(functio
 
 Route::prefix('customers')->group(function () {
     Route::put('{customer}/update', [CustomerController::class, 'update']);
-    //0761484284 //odera 
     //Customer Categories
     Route::controller(CategoryController::class)->group(function () {
         Route::get('{customer}/categories', 'index');
@@ -53,7 +52,7 @@ Route::prefix('customers')->group(function () {
         Route::delete('{customer}/budgets/{budget}/delete', 'destroy');
     });
 
-    //Customer Budgets
+    //Customer Feedback
     Route::controller(FeedbackController::class)->group(function () {
         Route::get('{customer}/feedbacks', 'index');
         Route::post('{customer}/feedbacks', 'store');
@@ -65,12 +64,12 @@ Route::prefix('customers')->group(function () {
         Route::post('{customer}/cash-expense-transactions', 'store');
     });
 
-    //Customer Cash Expense Transactions
+    //Customer Scheduled  Transactions
     Route::controller(ScheduledTransactionController::class)->group(function () {
         Route::get('{customer}/scheduled-transactions', 'index');
         Route::post('{customer}/scheduled-transactions', 'store');
         Route::get('{customer}/scheduled-transactions/upcoming/count', 'upcomingScheduledTransactionsCountByDate');
-        Route::get('{customer}/scheduled-transactions/upcoming', 'upcomingScheduledTransactionsByDate');
+        Route::post('{customer}/scheduled-transactions/upcoming', 'upcomingScheduledTransactionsByDate');
     });
 
     //Customer Wallet
