@@ -31,6 +31,7 @@ Route::prefix('customers')->group(function () {
     Route::put('{customer}/update', [CustomerController::class, 'update']);
     //Customer Categories
     Route::controller(CategoryController::class)->group(function () {
+        Route::get('{customer}/categories/expenditures', 'getCategoriesWithSpentAmount');
         Route::get('{customer}/categories', 'index');
         Route::post('{customer}/categories', 'store');
         Route::put('{customer}/categories/{category}/update', 'update');

@@ -15,6 +15,31 @@ class CategoryController extends Controller
 {
     public function __construct(private CategoryService $categoryService) {}
 
+    /**
+     * Get categories with spent amount
+     * 
+     * @param Customer $customer
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
+    public function getCategoriesWithSpentAmount(Customer $customer): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $customer = $this->categoryService->getCategoriesWithSpentAmount($customer);
+            return new ApiSuccessResponse($customer, "Success");
+        } catch (ExpectedException $expectedException) {
+            return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
+
+    /**
+     * Get all categories for a customer
+     * 
+     * @param Customer $customer
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
     public function index(Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
         try {
@@ -27,6 +52,13 @@ class CategoryController extends Controller
         }
     }
 
+    /**
+     * Create a category
+     * 
+     * @param Request $request
+     * @param Customer $customer
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
     public function store(Request $request, Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
         try {
@@ -39,7 +71,15 @@ class CategoryController extends Controller
         }
     }
 
-    public function update(Request $request, Customer $customer, Category $category): ApiSuccessResponse|ApiErrorResponse
+    /**
+     * Update a category
+     * 
+     * @param Request $request
+     * @param Customer $customer
+     * @param Category $category
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
+    public function update(Request $request, Category $category): ApiSuccessResponse|ApiErrorResponse
     {
         try {
             $customer = $this->categoryService->updateCategory($request, $category);
@@ -51,6 +91,13 @@ class CategoryController extends Controller
         }
     }
 
+    /**
+     * Delete a category
+     * 
+     * @param Customer $customer
+     * @param Category $category
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
     public function destroy(Customer $customer, Category $category): ApiSuccessResponse|ApiErrorResponse
     {
         try {

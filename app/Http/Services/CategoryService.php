@@ -13,11 +13,35 @@ class CategoryService
 {
     public function __construct(private CategoryRepository $category) {}
 
+    /**
+     * Get categories with spent amount
+     * 
+     * @param Customer $customer
+     * @return array
+     */
+    public function getCategoriesWithSpentAmount(Customer $customer)
+    {
+        return $this->category->getCategoriesWithSpentAmount($customer);
+    }
+
+    /**
+     * Get all categories for a customer
+     * 
+     * @param Customer $customer
+     * @return array
+     */
     public function getCategory(Customer $customer)
     {
         return $this->category->getCustomerCategories($customer);
     }
 
+    /**
+     * Create a category
+     * 
+     * @param Request $request
+     * @param Customer $customer
+     * @return Category
+     */
     public function createCategory(Request $request, Customer $customer)
     {
         try {
@@ -33,6 +57,13 @@ class CategoryService
         }
     }
 
+    /**
+     * Update a category
+     * 
+     * @param Request $request
+     * @param Category $category
+     * @return Category
+     */
     public function updateCategory(Request $request, Category $category)
     {
         try {
@@ -48,6 +79,13 @@ class CategoryService
         }
     }
 
+    /**
+     * Delete a category
+     * 
+     * @param Category $category
+     * @param Customer $customer
+     * @return void
+     */
     public function deleteCategory(Category $category, Customer $customer)
     {
         try {
