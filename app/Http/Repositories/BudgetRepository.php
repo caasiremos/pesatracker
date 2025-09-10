@@ -6,6 +6,7 @@ use App\Models\Budget;
 use App\Models\Category;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BudgetRepository
 {
@@ -13,7 +14,25 @@ class BudgetRepository
     {
         return Budget::query()
             ->with('category:id,name') // Only select id and name from category
-            ->select(['id', 'amount', 'category_id']) // Must include category_id
+            ->select([
+                'id', 
+                'amount', 
+                'category_id',
+                DB::raw('(
+                    COALESCE((
+                        SELECT SUM(amount) 
+                        FROM cash_expenses 
+                        WHERE category_id = budgets.category_id 
+                        AND customer_id = ' . $customer->id . '
+                    ), 0) + 
+                    COALESCE((
+                        SELECT SUM(amount) 
+                        FROM scheduled_transactions 
+                        WHERE category_id = budgets.category_id 
+                        AND customer_id = ' . $customer->id . '
+                    ), 0)
+                ) as spent')
+            ])
             ->where('customer_id', $customer->id)
             ->get();
     }
