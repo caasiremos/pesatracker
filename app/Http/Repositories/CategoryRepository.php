@@ -77,7 +77,7 @@ class CategoryRepository
             ->select([
                 'id',
                 'name',
-                DB::raw('(
+                DB::raw('CAST((
                     COALESCE((
                         SELECT SUM(amount) 
                         FROM cash_expenses 
@@ -90,7 +90,7 @@ class CategoryRepository
                         WHERE category_id = categories.id 
                         AND customer_id = ' . $customer->id . '
                     ), 0)
-                ) as spent')
+                ) AS UNSIGNED) as spent')
             ])
             ->where('customer_id', $customer->id)
             ->orderBy('spent', 'desc')
