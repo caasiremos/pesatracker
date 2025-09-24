@@ -23,6 +23,39 @@ class WalletRepository
 {
     public function __construct(private MobileMoney $mobileMoney) {}
 
+    public function walletTransfer(Request $request, Customer $customer)
+    {
+        // Get source wallet (current customer)
+        $sourceWallet = Wallet::query()->where('customer_id', $customer->id)->first();
+        
+        // Get destination wallet using the wallet identifier from request
+        $destinationWallet = Wallet::query()->where('wallet_identifier', $request->wallet_identifier)->first();
+        
+        // Check if both wallets exist
+        if (!$sourceWallet || !$destinationWallet) {
+            throw new \Exception('Source or destination wallet not found');
+        }
+        
+        // Check if source wallet has sufficient balance
+        if ($sourceWallet->balance < $request->amount) {
+            throw new \Exception('Insufficient balance in source wallet');
+        }
+        
+        // Perform the transfer
+        $sourceWallet->balance -= $request->amount;
+        $destinationWallet->balance += $request->amount;
+        
+        // Save both wallets
+        $sourceWallet->save();
+        $destinationWallet->save();
+        
+        return [
+            'source_wallet' => $sourceWallet,
+            'destination_wallet' => $destinationWallet,
+            'amount_transferred' => $request->amount
+        ];
+    }
+
     /**
      * Get wallet details
      * 

@@ -90,4 +90,9 @@ class WalletService
     {
         $this->walletRepository->relworxProductCallback($request);
     }
+
+    public function walletTransfer(Request $request, Customer $customer)
+    {
+        return $this->walletRepository->walletTransfer($request, $customer);
+    }
 }

@@ -79,6 +79,7 @@ Route::prefix('customers')->group(function () {
     Route::controller(WalletController::class)->group(function () {
         Route::get('{customer}/wallet', 'index');
         Route::post('{customer}/deposit', 'store');
+        Route::post('{customer}/wallet/transfer', 'walletTransfer');
     });
 
     Route::post('logout', [CustomerController::class, 'logout']);

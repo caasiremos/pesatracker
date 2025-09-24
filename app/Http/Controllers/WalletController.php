@@ -106,5 +106,24 @@ class WalletController extends Controller
         } catch (Throwable $throwable) {
             new ApiErrorResponse($throwable->getMessage(), $throwable);
         }
+    }   
+
+    /**
+     * Wallet transfer
+     * 
+     * @param Request $request
+     * @param Customer $customer
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
+    public function walletTransfer(Request $request, Customer $customer)
+    {
+        try {
+            $this->walletService->walletTransfer($request, $customer);
+            return new ApiSuccessResponse($customer->wallet, "Wallet transfer successful.");
+        } catch (ExpectedException $expectedException) {
+            return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
     }
 }
