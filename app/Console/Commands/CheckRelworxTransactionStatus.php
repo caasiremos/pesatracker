@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Payment\Relworx\MobileMoney;
+use App\Utils\Logger;
 use Illuminate\Console\Command;
 
 class CheckRelworxTransactionStatus extends Command
@@ -26,6 +27,7 @@ class CheckRelworxTransactionStatus extends Command
      */
     public function handle()
     {
-        (new MobileMoney())->getTransactionStatus();
+        Logger::info('Checking relworx transaction status');
+        //(new MobileMoney())->getTransactionStatus();
     }
 }
