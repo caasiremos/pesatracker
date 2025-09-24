@@ -84,4 +84,15 @@ class ScheduledTransactionService
     {
         return $this->scheduledTransaction->getUpcomingTransactionsByDate($request, $customer);
     }
+
+    /**
+     * Get upcoming transactions balances
+     * 
+     * @param Customer $customer
+     * @return array
+     */
+    public function upcomingTransactionsBalances(Customer $customer)
+    {
+        return $this->scheduledTransaction->getUpcomingTransactionsBalances($customer);
+    }
 }

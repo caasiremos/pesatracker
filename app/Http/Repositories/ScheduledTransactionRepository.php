@@ -75,6 +75,69 @@ class ScheduledTransactionRepository
     }
 
     /**
+     * Get upcoming scheduled transactions today
+     * 
+     * @param Customer $customer
+     * @return array
+     */
+    public function getUpcomingScheduledTransactionsToday(Customer $customer)
+    {
+        return ScheduledTransaction::query()
+            ->where('customer_id', $customer->id)
+            ->where('payment_date', now()->toDateString())
+            ->sum('amount');
+    }
+
+    /**
+     * Get upcoming scheduled transactions this week
+     * 
+     * @param Customer $customer
+     * @return array
+     */
+    public function getUpcomingScheduledTransactionsThisWeek(Customer $customer)
+    {
+        return ScheduledTransaction::query()
+            ->where('customer_id', $customer->id)
+            ->whereBetween('payment_date', [
+                now()->startOfWeek()->toDateString(),
+                now()->endOfWeek()->toDateString()
+            ])
+            ->sum('amount');
+    }
+
+    /**
+     * Get upcoming scheduled transactions this month
+     * 
+     * @param Customer $customer
+     * @return array
+     */
+    public function getUpcomingScheduledTransactionsThisMonth(Customer $customer)
+    {
+        return ScheduledTransaction::query()
+            ->where('customer_id', $customer->id)
+            ->whereBetween('payment_date', [
+                now()->startOfMonth()->toDateString(),
+                now()->endOfMonth()->toDateString()
+            ])
+            ->sum('amount');
+    }
+
+    /**
+     * Get upcoming transactions balances
+     * 
+     * @param Customer $customer
+     * @return array
+     */
+    public function getUpcomingTransactionsBalances(Customer $customer)
+    {
+        return [
+            'today' => $this->getUpcomingScheduledTransactionsToday($customer),
+            'this_week' => $this->getUpcomingScheduledTransactionsThisWeek($customer),
+            'this_month' => $this->getUpcomingScheduledTransactionsThisMonth($customer),
+        ];
+    }
+
+    /**
      * Get upcoming transactions by date
      * 
      * @param Request $request

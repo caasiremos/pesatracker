@@ -77,6 +77,24 @@ class ScheduledTransactionController extends Controller
     }
 
     /**
+     * Get upcoming transactions balances
+     * 
+     * @param Customer $customer
+     * @return ApiSuccessResponse|ApiErrorResponse
+     */
+    public function upcomingTransactionsBalances(Customer $customer): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $customer = $this->scheduledTransactionService->upcomingTransactionsBalances($customer);
+            return new ApiSuccessResponse($customer, "Upcoming Transactions Balances Retrieved Successful.");
+        } catch (ExpectedException $expectedException) {
+            return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
+    /**
      * Get scheduled transactions
      * 
      * @param Request $request
