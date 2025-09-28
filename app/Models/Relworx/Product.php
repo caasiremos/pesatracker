@@ -14,7 +14,8 @@ class Product extends Model
         'category',
         'has_price_list',
         'has_choice_list',
-        'billable'
+        'billable',
+        'label'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

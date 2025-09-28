@@ -56,6 +56,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 1,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label'=>'Smart Number'
             ],
             [
                 'name' => 'Uganda Telecom Airtime',
@@ -64,6 +65,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 0,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Phone Number'
             ],
             [
                 'name' => 'MTN Uganda Airtime',
@@ -72,6 +74,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 0,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Phone Number'
             ],
             [
                 'name' => 'AZAM TV',
@@ -80,6 +83,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 1,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Smart Card Number'
             ],
             [
                 'name' => 'Airtel Uganda Internet',
@@ -88,6 +92,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 1,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Phone Number'
             ],
             [
                 'name' => 'Roke Telecom Internet',
@@ -96,6 +101,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 1,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Phone Number'
             ],
             [
                 'name' => 'MTN Uganda Internet',
@@ -104,6 +110,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 1,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Phone Number'
             ],
             [
                 'name' => 'Airtel Uganda Voice Bundles',
@@ -112,6 +119,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 1,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Phone Number'
             ],
             [
                 'name' => 'DSTV - Multichoice',
@@ -120,6 +128,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 1,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Smart Card Number'
             ],
             [
                 'name' => 'MTN Uganda Voice Bundles',
@@ -128,6 +137,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 1,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Phone Number'
             ],
             [
                 'name' => 'UECDL Light',
@@ -136,6 +146,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 0,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Light Meter Number'
             ],
             [
                 'name' => 'National Water',
@@ -144,6 +155,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 0,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Water Meter Number'
             ],
             [
                 'name' => 'Startimes Bouquets',
@@ -152,6 +164,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 1,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Smart Card Number'
             ],
             [
                 'name' => 'Airtel Uganda Airtime',
@@ -160,6 +173,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 0,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Phone Number'
             ],
             [
                 'name' => 'Multichoice - DSTV/GOtv',
@@ -168,6 +182,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 1,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Smart Card Number'
             ],
             [
                 'name' => 'Airtel Money',
@@ -176,14 +191,16 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 0,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Phone Number'
             ],
-             [
+            [
                 'name' => 'MTN Mobile Money',
                 'code' => 'MTN_MONEY',
                 'category' => 'OTHERS',
                 'has_price_list' => 0,
                 'has_choice_list' => 0,
                 'billable' => 1,
+                'label' => 'Phone Number'
             ],
         ];
     }
@@ -191,7 +208,7 @@ class DatabaseSeeder extends Seeder
     private function createProducts()
     {
         foreach ($this->products() as $product) {
-            Product::create($product);
+            Product::updateOrCreate(['name' => $product['name']],$product);
         }
     }
 
