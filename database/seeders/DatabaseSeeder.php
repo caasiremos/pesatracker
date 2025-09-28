@@ -56,7 +56,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 1,
                 'has_choice_list' => 0,
                 'billable' => 1,
-                'label'=>'Smart Number'
+                'label'=>'Smart Card Number'
             ],
             [
                 'name' => 'Uganda Telecom Airtime',
