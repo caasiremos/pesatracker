@@ -18,7 +18,7 @@ class ScheduledTransactionRepository
 {
     /**
      * Get the business account number from the config
-     * 
+     *
      * @return string
      */
     private static function accountNo()
@@ -28,7 +28,7 @@ class ScheduledTransactionRepository
 
     /**
      * Get a transaction reference
-     * 
+     *
      * @return string
      */
     private static function transactionReference()
@@ -38,7 +38,7 @@ class ScheduledTransactionRepository
 
     /**
      * Get customer scheduled transactions
-     * 
+     *
      * @param Customer $customer
      * @return array
      */
@@ -53,7 +53,7 @@ class ScheduledTransactionRepository
 
     /**
      * Get upcoming scheduled transactions count by date
-     * 
+     *
      * @param Customer $customer
      * @return array
      */
@@ -76,7 +76,7 @@ class ScheduledTransactionRepository
 
     /**
      * Get upcoming scheduled transactions today
-     * 
+     *
      * @param Customer $customer
      * @return array
      */
@@ -90,7 +90,7 @@ class ScheduledTransactionRepository
 
     /**
      * Get upcoming scheduled transactions this week
-     * 
+     *
      * @param Customer $customer
      * @return array
      */
@@ -107,7 +107,7 @@ class ScheduledTransactionRepository
 
     /**
      * Get upcoming scheduled transactions this month
-     * 
+     *
      * @param Customer $customer
      * @return array
      */
@@ -124,7 +124,7 @@ class ScheduledTransactionRepository
 
     /**
      * Get upcoming transactions balances
-     * 
+     *
      * @param Customer $customer
      * @return array
      */
@@ -139,7 +139,7 @@ class ScheduledTransactionRepository
 
     /**
      * Get upcoming transactions by date
-     * 
+     *
      * @param Request $request
      * @param Customer $customer
      * @return array
@@ -155,10 +155,10 @@ class ScheduledTransactionRepository
 
     /**
      * Create a scheduled transaction
-     * 
+     *
      * @param Request $request
      * @param Customer $customer
-     * @return ScheduledTransaction     
+     * @return ScheduledTransaction
      */
     public function createScheduledTransaction(Request $request, Customer $customer)
     {
@@ -178,7 +178,7 @@ class ScheduledTransactionRepository
 
     /**
      * Scheduled transactions like customer
-     * 
+     *
      * @param Request $request
      * @return array
      */
@@ -263,7 +263,7 @@ class ScheduledTransactionRepository
 
     /**
      * Light payment
-     * 
+     *
      * @param ScheduledTransaction $transaction
      * @return void
      */
@@ -276,7 +276,7 @@ class ScheduledTransactionRepository
             'reference' => $reference,
             'msisdn' => $transaction->code,
             'amount' => $transaction->amount,
-            'product_code' => $transaction->code,
+            'product_code' => $transaction->product->code,
             'contact_phone' => $transaction->transaction_phone_number,
             'location_id' => null
         ];
@@ -325,7 +325,7 @@ class ScheduledTransactionRepository
 
     /**
      * Water payment
-     * 
+     *
      * @param ScheduledTransaction $transaction
      * @return void
      */
@@ -386,7 +386,7 @@ class ScheduledTransactionRepository
 
     /**
      * Voice bundles payment
-     * 
+     *
      * @param ScheduledTransaction $transaction
      * @return void
      */
@@ -446,7 +446,7 @@ class ScheduledTransactionRepository
 
     /**
      * Airtime payment
-     * 
+     *
      * @param ScheduledTransaction $transaction
      * @return void
      */
@@ -507,7 +507,7 @@ class ScheduledTransactionRepository
 
     /**
      * Internet payment
-     * 
+     *
      * @param ScheduledTransaction $transaction
      * @return void
      */
@@ -568,7 +568,7 @@ class ScheduledTransactionRepository
 
     /**
      * Update the payment date
-     * 
+     *
      * @param ScheduledTransaction $transaction
      * @return void
      */
@@ -595,7 +595,7 @@ class ScheduledTransactionRepository
 
     /**
      * Create a transaction log
-     * 
+     *
      * @param ScheduledTransaction $transaction
      * @param string $reference
      * @param string $status
@@ -614,7 +614,7 @@ class ScheduledTransactionRepository
 
     /**
      * Update the transaction log
-     * 
+     *
      * @param string $reference
      * @param string $status
      * @param string $externalTransactionReference
@@ -631,7 +631,7 @@ class ScheduledTransactionRepository
 
     /**
      * Deduct the amount from the customer's balance
-     * 
+     *
      * @param ScheduledTransaction $transaction
      * @return void
      */
@@ -644,7 +644,7 @@ class ScheduledTransactionRepository
 
     /**
      * Send an SMS
-     * 
+     *
      * @param ScheduledTransaction $transaction
      * @return void
      */
@@ -660,7 +660,7 @@ class ScheduledTransactionRepository
 
     /**
      * Check the customer's balance
-     * 
+     *
      * @param ScheduledTransaction $transaction
      * @return bool
      */
@@ -672,7 +672,7 @@ class ScheduledTransactionRepository
 
     /**
      * Send an SMS
-     * 
+     *
      * @param ScheduledTransaction $transaction
      * @return void
      */
