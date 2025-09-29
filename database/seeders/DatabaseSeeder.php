@@ -16,8 +16,10 @@ use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Payment\Relworx\Products;
 use Database\Factories\ScheduledTransactionFactory;
+
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use PHPUnit\TextUI\Configuration\Merger;
 
 class DatabaseSeeder extends Seeder
@@ -28,11 +30,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory()->create([
-        //     'name' => 'Aremo Isaac',
-        //     'email' => 'aremoisaac@gmail.com',
-        // ]);
-
+        $this->createUsers();
         $this->createProducts();
         $this->createPriceList();
         // Customer::factory(100)->create();
@@ -46,6 +44,22 @@ class DatabaseSeeder extends Seeder
         // WalletTransaction::factory(100)->create();
     }
 
+    private function users()
+    {
+        return [
+            [
+                'name' => 'Aremo Isaac',
+                'email' => 'aremoisaac@gmail.com',
+                'password' => Hash::make('password'),
+            ],
+            [
+                'name' => 'Henry Kaliisa',
+                'email' => 'henry@zasco.ug',
+                'password' => Hash::make('password'),
+            ]
+        ];
+    }
+
     private function products()
     {
         return [
@@ -56,7 +70,7 @@ class DatabaseSeeder extends Seeder
                 'has_price_list' => 1,
                 'has_choice_list' => 0,
                 'billable' => 1,
-                'label'=>'Smart Card Number'
+                'label' => 'Smart Card Number'
             ],
             [
                 'name' => 'Uganda Telecom Airtime',
@@ -205,10 +219,17 @@ class DatabaseSeeder extends Seeder
         ];
     }
 
+    private function createUsers()
+    {
+        foreach ($this->users() as $user) {
+            User::updateOrCreate(['name' => $user['name']], $user);
+        }
+    }
+
     private function createProducts()
     {
         foreach ($this->products() as $product) {
-            Product::updateOrCreate(['name' => $product['name']],$product);
+            Product::updateOrCreate(['name' => $product['name']], $product);
         }
     }
 
