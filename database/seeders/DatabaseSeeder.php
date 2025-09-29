@@ -33,14 +33,14 @@ class DatabaseSeeder extends Seeder
         $this->createUsers();
         $this->createProducts();
         $this->createPriceList();
-         Customer::factory(100)->create();
-         Category::factory(100)->create();
-         Budget::factory(100)->create();
-         ScheduledTransaction::factory(100)->create();
-         CashExpense::factory(100)->create();
-         Feedback::factory(100)->create();
-         Wallet::factory(100)->create();
-         WalletTransaction::factory(100)->create();
+//         Customer::factory(100)->create();
+//         Category::factory(100)->create();
+//         Budget::factory(100)->create();
+//         ScheduledTransaction::factory(100)->create();
+//         CashExpense::factory(100)->create();
+//         Feedback::factory(100)->create();
+//         Wallet::factory(100)->create();
+//         WalletTransaction::factory(100)->create();
     }
 
     private function users()
