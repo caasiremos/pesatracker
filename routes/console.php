@@ -13,5 +13,5 @@ Schedule::command('app:check-relworx-transaction-status')
     ->runInBackground();
 
 Schedule::command('app:run-schedule-transactions')
-    ->everyTwoSeconds()
+    ->everyMinute()
     ->runInBackground();
