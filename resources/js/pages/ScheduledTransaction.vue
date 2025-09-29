@@ -74,6 +74,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                                             <th
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Product</th>
+
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Code</th>
                                             <th
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Amount</th>
@@ -85,10 +89,6 @@ const breadcrumbs: BreadcrumbItem[] = [
                                             <th
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Payment Date</th>
-
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Status</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
@@ -112,6 +112,9 @@ const breadcrumbs: BreadcrumbItem[] = [
                                                 transaction.category.name }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">{{
                                                 transaction.product.name }}</td>
+
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{
+                                                    transaction.code }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-bold">
                                                 {{ transaction.amount }}</td>
 
