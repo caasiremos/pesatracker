@@ -9,5 +9,9 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('app:check-relworx-transaction-status')
-    ->everyTwoSeconds()   
-    ->runInBackground();  
+    ->everyTwoSeconds()
+    ->runInBackground();
+
+Schedule::command('app:run-schedule-transactions')
+    ->everyTwoSeconds()
+    ->runInBackground();

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Http\Repositories\ScheduledTransactionRepository;
+use App\Utils\Logger;
 use Illuminate\Console\Command;
 
 class RunScheduleTransactions extends Command
@@ -26,6 +27,7 @@ class RunScheduleTransactions extends Command
      */
     public function handle()
     {
+        Logger::info('Running scheduled transactions');
         (new ScheduledTransactionRepository())->runScheduledTransactions();
     }
 }
