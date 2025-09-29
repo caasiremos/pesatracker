@@ -32,20 +32,3 @@ class ScheduledTransactionFactory extends Factory
         ];
     }
 }
-
-
-[2025-09-29 10:56:24] local.INFO: {
-    "account_no": "REL08CACA5DDF",
-    "reference": "c031961c-f7c3-4ce1-bd09-1c7eb8c93f8a",
-    "msisdn": "14333680131",
-    "amount": 1000,
-    "product_code": "14333680131",
-    "contact_phone": "256786966244",
-    "location_id": null
-}
-
-[2025-09-29 10:56:25] local.INFO: {
-    "success": false,
-    "message": "Invalid product code.",
-    "error_code": "INVALID_PARAMETER_VALUE"
-}
