@@ -73,7 +73,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
                                             <th
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Merchant</th>
+                                                Product</th>
                                             <th
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Amount</th>
@@ -111,7 +111,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">{{
                                                 transaction.category.name }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">{{
-                                                transaction.merchant.name }}</td>
+                                                transaction.product.name }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-bold">
                                                 {{ transaction.amount }}</td>
 
