@@ -27,7 +27,6 @@ class CheckRelworxTransactionStatus extends Command
      */
     public function handle()
     {
-        Logger::info('Checking relworx transaction status');
-        //(new MobileMoney())->getTransactionStatus();
+        (new MobileMoney())->getTransactionStatus();
     }
 }
