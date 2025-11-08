@@ -148,8 +148,13 @@ class ScheduledTransactionRepository
     {
         $date = Carbon::createFromFormat('d/m/Y', $request->payment_date)->format('Y-m-d');
         return ScheduledTransaction::query()
-            ->where('customer_id', $customer->id)
-            ->where('payment_date', $date)
+            ->select([
+                'scheduled_transactions.*',
+                'categories.name as category_name',
+            ])
+            ->join('categories', 'categories.id', '=', 'scheduled_transactions.category_id')
+            ->where('scheduled_transactions.customer_id', $customer->id)
+            ->where('scheduled_transactions.payment_date', $date)
             ->get();
     }
 
