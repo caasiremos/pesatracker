@@ -14,6 +14,7 @@ class Products
     private const CHOICE_LIST_URL = "https://payments.relworx.com/api/products/choice-list";
     private const VALIDATE_PRODUCT_URL = "https://payments.relworx.com/api/products/validate";
     private const PURCHASE_PRODUCT_URL = "https://payments.relworx.com/api/products/purchase";
+    private const DISBURSE_FUNDS_URL = "https://payments.relworx.com/api/mobile-money/send-payment";
     public string $apiKey;
 
     public function __construct()
@@ -143,6 +144,35 @@ class Products
                 'Authorization' => 'Bearer ' . $this->apiKey
             ],
         )->post(self::PURCHASE_PRODUCT_URL, $params)->json();
+        Logger::info($response);
+        return $response;
+    }
+
+      /**
+     * Disburse funds
+     *
+     * @param string $reference
+     * @param string $msisdn
+     * @param int $amount
+     * @return array
+     */
+    public function disburseFunds(array $params)
+    {
+        $params = [
+            'account_no' => $params['account_no'],
+            'reference' => $params['reference'],
+            'msisdn' => $params['msisdn'],
+            'currency' => "UGX",
+            'amount' => $params['amount'],
+            'description' => "Disbursement"
+        ];
+        return Http::asJson()->withHeaders(
+            [
+                'Accept' => 'application/vnd.relworx.v2',
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $this->apiKey
+            ],
+        )->post(self::DISBURSE_FUNDS_URL, $params)->json();
         Logger::info($response);
         return $response;
     }

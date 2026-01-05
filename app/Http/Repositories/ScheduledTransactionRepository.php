@@ -13,6 +13,7 @@ use App\Utils\SMS;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 
 class ScheduledTransactionRepository
 {
@@ -34,6 +35,52 @@ class ScheduledTransactionRepository
     private static function transactionReference()
     {
         return Str::uuid()->toString();
+    }
+
+      /**
+     * Disburse funds
+     *
+     * @param string $reference
+     * @param string $msisdn
+     * @param int $amount
+     * @return array
+     */
+    public function disburseFunds(ScheduledTransaction $transaction)
+    {
+        $reference = static::transactionReference();
+        $params = [
+            'account_no' => static::accountNo(),
+            'reference' => $reference,
+            'msisdn' => "+" . $transaction->transaction_phone_number,
+            'currency' => "UGX",
+            'amount' => $transaction->amount,
+            'description' => "Disbursement"
+        ];
+        Logger::info($params);
+        // Create a transaction log
+        echo "Creating transaction log\n";
+        $this->createTransactionLog($transaction, static::transactionReference(), ScheduledTransaction::STATUS_PENDING);
+        $response = (new Products())->disburseFunds($params);
+        Logger::info($response);
+        if ($response['success']) {
+            // Update the transaction log
+            echo "Updating transaction log\n";
+            $this->updateTransactionLog($reference, ScheduledTransaction::STATUS_SUCCESS, $response['internal_reference']);
+            // Deduct the amount from the customer's balance
+            echo "Deducting amount from customer balance\n";
+            $this->deductAmountFromCustomerBalance($transaction);
+            // Send an SMS
+            echo "Sending SMS\n";
+            $this->sendSms($transaction);
+            // Update the payment date
+            echo "Updating payment date\n";
+            $this->updatePaymentDate($transaction);
+            return true;
+        } else {
+            // Update the transaction log
+            echo "Updating transaction log\n";
+            $this->updateTransactionLog($reference, ScheduledTransaction::STATUS_FAILED, null);
+        }
     }
 
     /**
@@ -219,6 +266,16 @@ class ScheduledTransactionRepository
         $scheduledTransactions = ScheduledTransaction::where('payment_date', now()->toDateString())->get();
 
         foreach ($scheduledTransactions as $transaction) {
+            if ($transaction->product->code == 'MTN_MONEY' || $transaction->product->code == 'AIRTEL_MONEY') {
+                if ($this->checkCustomerBalance($transaction)) {
+                    $this->disburseFunds($transaction);
+                    echo "Disbursement successful\n";
+                } else {
+                    $this->sendInsufficientBalanceSms($transaction);
+                    echo "Insufficient balance\n";
+                }
+            }
+
             if ($transaction->product->code == 'UMEME_PRE_PAID') {
                 if ($this->checkCustomerBalance($transaction)) {
                     $this->lightPayment($transaction);
