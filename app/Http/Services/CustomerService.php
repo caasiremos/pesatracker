@@ -17,6 +17,13 @@ class CustomerService
 {
     public function __construct(private CustomerRepository $customerRepository) {}
 
+    /**
+     * Register a new customer
+     * @param Request $request
+     * @return Customer
+     * @throws ExpectedException
+     * @throws Throwable
+     */
     public function register(Request $request)
     {
         try {
@@ -35,6 +42,14 @@ class CustomerService
         }
     }
 
+    /**
+     * Update customer details
+     * @param Request $request
+     * @param Customer $customer
+     * @return Customer
+     * @throws ExpectedException
+     * @throws Throwable
+     */
     public function updatedCustomerDetails(Request $request, Customer $customer)
     {
         try {
@@ -46,6 +61,13 @@ class CustomerService
         }
     }
 
+    /**
+     * Login a customer
+     * @param Request $request
+     * @return array
+     * @throws ExpectedException
+     * @throws Throwable
+     */
     public function login(Request $request)
     {
         try {
@@ -82,13 +104,23 @@ class CustomerService
         }
     }
 
+    /**
+     * Logout a customer
+     * @param Request $request
+     * @return bool
+     * @throws ExpectedException
+     * @throws Throwable
+     */
     public function logout(Request $request)
     {
         return $this->customerRepository->logout($request);
     }
 
-      /**
+    /**
      * Send OTP to customer to verify phone number
+     * @return int
+     * @throws ExpectedException
+     * @throws Throwable
      */
     public function sendOtp(): int
     {
@@ -98,7 +130,11 @@ class CustomerService
     }
 
     /**
-     * Verify that the OTP is valid
+     * Verify OTP submitted
+     * @param Request $request
+     * @return bool
+     * @throws ExpectedException
+     * @throws Throwable
      */
     public function verifyOtp(Request $request): bool
     {
@@ -123,6 +159,13 @@ class CustomerService
         }
     }
 
+    /**
+     * Get all customers
+     * @param Request $request
+     * @return Collection
+     * @throws ExpectedException
+     * @throws Throwable
+     */
     public function getCustomers(Request $request)
     {
         return $this->customerRepository->getCustomers($request);

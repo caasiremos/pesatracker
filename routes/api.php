@@ -51,6 +51,7 @@ Route::prefix('customers')->group(function () {
         Route::post('{customer}/budgets', 'store');
         Route::put('{customer}/budgets/{budget}/update', 'update');
         Route::delete('{customer}/budgets/{budget}/delete', 'destroy');
+        Route::get('{customer}/budgets/sum', 'getCustomerBudgetSum');
     });
 
     //Customer Feedback

@@ -10,6 +10,25 @@ use Illuminate\Support\Facades\DB;
 
 class BudgetRepository
 {
+   /*
+    * Get sum of budgets for a customer
+    * 
+    * @param Customer $customer
+    * @return array
+    */
+    public function getCustomerBudgetSum(Customer $customer)
+    {
+        return Budget::query()
+            ->where('customer_id', $customer->id)
+            ->sum('amount');
+    }
+
+    /*
+    * Get all budgets for a customer
+    * 
+    * @param Customer $customer
+    * @return array
+    */
     public function getCustomerBudgets(Customer $customer)
     {
         return Budget::query()
@@ -37,6 +56,13 @@ class BudgetRepository
             ->get();
     }
 
+    /*
+    * Create a budget
+    * 
+    * @param Request $request
+    * @param Customer $customer
+    * @return Budget
+    */
     public function createBudget(Request $request, Customer $customer)
     {
         return Budget::query()
@@ -47,6 +73,13 @@ class BudgetRepository
             ]);
     }
 
+    /*
+    * Update a budget
+    * 
+    * @param Request $request
+    * @param Budget $budget
+    * @return Budget
+    */
     public function updateBudget(Request $request, Budget $budget)
     {
         Budget::query()->find($budget->id)->update([
@@ -57,6 +90,12 @@ class BudgetRepository
         return $budget->refresh();
     }
 
+    /*
+    * Delete a budget
+    * 
+    * @param Budget $budget
+    * @return void
+    */
     public function deleteBudget(Budget $budget)
     {
         return Budget::query()->find($budget->id)->delete();

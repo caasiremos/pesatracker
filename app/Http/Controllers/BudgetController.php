@@ -15,6 +15,30 @@ class BudgetController extends Controller
 {
 public function __construct(private BudgetService $budgetService) {}
 
+    /*
+    * Get sum of budgets for a customer
+    * 
+    * @param Customer $customer
+    * @return ApiSuccessResponse|ApiErrorResponse
+    */
+    public function getCustomerBudgetSum(Customer $customer): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $customer = $this->budgetService->getCustomerBudgetSum($customer);
+            return new ApiSuccessResponse($customer, "Success");
+        } catch (ExpectedException $expectedException) {
+            return new ApiErrorResponse($expectedException->getMessage(), $expectedException);
+        } catch (Throwable $throwable) {
+            return new ApiErrorResponse($throwable->getMessage(), $throwable);
+        }
+    }
+
+    /*
+    * Get all budgets for a customer
+    * 
+    * @param Customer $customer
+    * @return ApiSuccessResponse|ApiErrorResponse
+    */
     public function index(Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
         try {
@@ -27,6 +51,13 @@ public function __construct(private BudgetService $budgetService) {}
         }
     }
 
+    /*
+    * Create a budget
+    * 
+    * @param Request $request
+    * @param Customer $customer
+    * @return ApiSuccessResponse|ApiErrorResponse
+    */
     public function store(Request $request, Customer $customer): ApiSuccessResponse|ApiErrorResponse
     {
         try {
@@ -39,6 +70,14 @@ public function __construct(private BudgetService $budgetService) {}
         }
     }
 
+    /*
+    * Update a budget
+    * 
+    * @param Request $request
+    * @param Customer $customer
+    * @param Budget $budget
+    * @return ApiSuccessResponse|ApiErrorResponse
+    */
     public function update(Request $request, Customer $customer, Budget $budget): ApiSuccessResponse|ApiErrorResponse
     {
         try {
@@ -51,6 +90,13 @@ public function __construct(private BudgetService $budgetService) {}
         }
     }
 
+    /*
+    * Delete a budget
+    * 
+    * @param Customer $customer
+    * @param Budget $budget
+    * @return ApiSuccessResponse|ApiErrorResponse
+    */
     public function destroy(Customer $customer, Budget $budget): ApiSuccessResponse|ApiErrorResponse
     {
         try {

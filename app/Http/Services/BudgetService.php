@@ -13,6 +13,11 @@ class BudgetService
 {
     public function __construct(private BudgetRepository $budgetRepository) {}
 
+    public function getCustomerBudgetSum(Customer $customer)
+    {
+        return $this->budgetRepository->getCustomerBudgetSum($customer);
+    }
+
     public function getCustomerBudgets(Customer $customer)
     {
         return $this->budgetRepository->getCustomerBudgets($customer);
