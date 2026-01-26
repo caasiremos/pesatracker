@@ -320,6 +320,79 @@ class ScheduledTransactionRepository
                     $this->sendInsufficientBalanceSms($transaction);
                 }
             }
+
+            if (
+                $transaction->product->code == 'GO_TV' ||
+                $transaction->product->code == 'AZAM_TV' ||
+                $transaction->product->code == 'DSTV' ||
+                $transaction->product->code == 'STARTIMES' ||
+                $transaction->product->code == 'MULTICHOICE'
+            ) {
+                if ($this->checkCustomerBalance($transaction)) {
+                    $this->tvPayment($transaction);
+                } else {
+                    $this->sendInsufficientBalanceSms($transaction);
+                }
+            }
+        }
+    }
+
+    /**
+     * Tv payment
+     *
+     * @param ScheduledTransaction $transaction
+     * @return void
+     */
+    private function tvPayment(ScheduledTransaction $transaction)
+    {
+        $reference = static::transactionReference();
+        $params = [
+            'account_no' => static::accountNo(),
+            'reference' => $reference,
+            'msisdn' => $transaction->transaction_phone_number,
+            'amount' => $transaction->amount,
+            'product_code' => $transaction->product->code,
+            'contact_phone' => $transaction->transaction_phone_number,
+        ];
+
+        Logger::info($params);
+
+        // Create a transaction log
+        echo "Creating transaction log\n";
+        $this->createTransactionLog($transaction, $reference, ScheduledTransaction::STATUS_PENDING);
+
+        // Validate the product
+        echo "Validating product\n";
+        $validateProduct = (new Products())->validateProduct($params);
+        Logger::info($validateProduct);
+
+        if ($validateProduct['success']) {
+            $purchaseProductParams = [
+                "account_no" => static::accountNo(),
+                "validation_reference" => $validateProduct['validation_reference'],
+            ];
+            // Purchase the product
+            echo "Purchasing product\n";
+            $purchase = (new Products())->purchaseProduct($purchaseProductParams);
+
+            if ($purchase['success']) {
+                // Update the transaction log
+                echo "Updating transaction log\n";
+                $this->updateTransactionLog($reference, ScheduledTransaction::STATUS_SUCCESS, $purchase['internal_refence']);
+                // Deduct the amount from the customer's balance
+                echo "Deducting amount from customer balance\n";
+                $this->deductAmountFromCustomerBalance($transaction);
+                // Send an SMS
+                echo "Sending SMS\n";
+                $this->sendSms($transaction);
+                // Update the payment date
+                echo "Updating payment date\n";
+                $this->updatePaymentDate($transaction);
+            } else {
+                // Update the transaction log
+                echo "Updating transaction log\n";
+                $this->updateTransactionLog($reference, ScheduledTransaction::STATUS_FAILED, null);
+            }
         }
     }
 
