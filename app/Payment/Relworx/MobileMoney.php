@@ -61,7 +61,7 @@ class MobileMoney
                     'Content-Type' => 'application/json',
                     'Authorization' => 'Bearer ' . $this->apiKey
                 ],
-            )->withQueryParams([
+            )->withQueryParameters([
                 'internal_reference' => $walletTransaction->external_reference,
                 'account_no' => "REL08CACA5DDF"
             ])->get(self::GET_TRANSACTION_STATUS_URL)->json();
