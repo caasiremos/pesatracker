@@ -60,13 +60,16 @@ class FcmClient
 
     public function sendMessage($token, $notification)
     {
-        // Fetch the OAuth 2.0 access token
+        // Fetch the OAuth 2.0 access token (or id_token when returned instead)
         try {
             $tokenResponse = $this->googleClient->fetchAccessTokenWithAssertion();
             Logger::info('Access Token Response:', $tokenResponse);
-            $accessToken = $tokenResponse['access_token'] ?? null;
+            $accessToken = $tokenResponse['access_token'] ?? $tokenResponse['id_token'] ?? null;
             if (!$accessToken) {
-                throw new ExpectedException('FIREBASE_ACCESS_TOKEN_NOT_FOUND', 'Failed to retrieve access token');
+                $reason = isset($tokenResponse['error'])
+                    ? ($tokenResponse['error'] . ': ' . ($tokenResponse['error_description'] ?? ''))
+                    : 'No access_token or id_token in response';
+                throw new ExpectedException('FIREBASE_ACCESS_TOKEN_NOT_FOUND', $reason);
             }
         } catch (\Exception $e) {
             Logger::error(null, $e);
