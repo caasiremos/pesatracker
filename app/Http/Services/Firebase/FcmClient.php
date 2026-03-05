@@ -15,10 +15,34 @@ class FcmClient
 
     public function __construct()
     {
+        $credentialsPath = $this->resolveCredentialsPath();
         $this->googleClient = new GoogleClient();
-        $this->googleClient->setAuthConfig(storage_path('app/Firebase/firebase_credentials.json'));
+        $this->googleClient->setAuthConfig($credentialsPath);
         $this->googleClient->addScope('https://fcm.googleapis.com/auth/firebase.messaging');
         $this->httpClient = new HttpClient();
+    }
+
+    /**
+     * Resolve Firebase credentials path from config (respects FIREBASE_CREDENTIALS and GOOGLE_APPLICATION_CREDENTIALS).
+     */
+    private function resolveCredentialsPath(): string
+    {
+        $defaultProject = config('firebase.default', 'app');
+        $credentials = config("firebase.projects.{$defaultProject}.credentials", 'app/Firebase/firebase_credentials.json');
+        if (is_array($credentials)) {
+            $credentials = $credentials['file'] ?? $credentials['path'] ?? 'app/Firebase/firebase_credentials.json';
+        }
+        $path = is_string($credentials) ? $credentials : 'app/Firebase/firebase_credentials.json';
+        // Absolute path (Unix or Windows)
+        if (! str_starts_with($path, '/') && (strlen($path) < 2 || $path[1] !== ':')) {
+            $path = base_path($path);
+        }
+        if (! is_file($path)) {
+            throw new \InvalidArgumentException(
+                'Firebase credentials file not found: '.$path.'. Set FIREBASE_CREDENTIALS in .env to the path of your service account JSON, or place the file at app/Firebase/firebase_credentials.json.'
+            );
+        }
+        return $path;
     }
 
     public function sendMessage($token, $notification)
