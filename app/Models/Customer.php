@@ -19,8 +19,17 @@ class Customer extends Authenticatable
         'password',
         'phone_number',
         'status',
-        'avatar'
+        'avatar',
+        'fcm_token',
     ];
+
+    /**
+     * Route notifications for the FCM channel.
+     */
+    public function routeNotificationForFcm(): ?string
+    {
+        return $this->fcm_token;
+    }
     
     /**
      * The attributes that should be hidden for serialization.

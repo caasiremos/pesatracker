@@ -310,7 +310,7 @@ class WalletRepository
     private function initiateRelworxCollection(Request $request, Customer $customer)
     {
         $reference = Str::uuid();
-        $response = $this->mobileMoney->initiateCollection($reference, $request->phone_number, $request->amount);
+        $response = $this->mobileMoney->initiateCollection($reference, $request->phone_number, $request->amount, $customer);
         Logger::info('Relworx collection response', $response);
         if ($response['success'] === true) {
             $this->saveTransactionLogs($request, $response['internal_reference'], $customer, 'relworx', 'relworx collection');

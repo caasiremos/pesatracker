@@ -5,6 +5,7 @@ namespace App\Payment\Relworx;
 use App\Models\Customer;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
+use App\Notifications\FcmNotification;
 use App\Utils\Logger;
 use Illuminate\Support\Facades\Http;
 
@@ -19,7 +20,7 @@ class MobileMoney
         $this->apiKey = config('services.relworx.api_key');
     }
 
-    public function initiateCollection(string $reference, string $msisdn, int $amount)
+    public function initiateCollection(string $reference, string $msisdn, int $amount, ?Customer $customer = null)
     {
         $params = [
             'account_no' => "REL08CACA5DDF",
@@ -38,6 +39,15 @@ class MobileMoney
             ],
         )->post(self::INITIATE_COLLECTION_URL, $params)->json();
         Logger::info('Relworx initiate collection response', $response);
+
+        if (($response['success'] ?? false) === true && $customer?->fcm_token) {
+            $customer->notify(new FcmNotification([
+                'title' => 'Payment request sent',
+                'body' => 'Check your phone to approve the wallet deposit of ' . number_format($amount) . ' UGX.',
+                'data' => ['reference' => $reference, 'amount' => (string) $amount],
+            ]));
+        }
+
         return $response;
     }
 

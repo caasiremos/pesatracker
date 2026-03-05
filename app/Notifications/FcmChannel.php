@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Services\Firebase\Services\FcmClient as ServicesFcmClient;
+use App\Http\Services\Firebase\FcmClient;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
 
@@ -12,7 +12,7 @@ class FcmChannel
 
     public function __construct()
     {
-        $this->fcmClient = new ServicesFcmClient();
+        $this->fcmClient = new FcmClient();
     }
 
     public function send($notifiable, Notification $notification)
@@ -27,7 +27,7 @@ class FcmChannel
         $payload = $notification->toArray($notifiable);
         $response = $this->fcmClient->sendMessage($token, $payload);
 
-        if (ServicesFcmClient::wasSuccessful($response)) {
+        if (FcmClient::wasSuccessful($response)) {
             Log::info('FCM sent successfully', ['message_id' => $response['name'] ?? null]);
         } else {
             Log::error('FCM send failed', ['response' => $response]);
