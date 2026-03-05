@@ -3,22 +3,20 @@ namespace App\Http\Services\Firebase;
 
 use App\Exceptions\ExpectedException;
 use App\Utils\Logger;
-use Google\Client as GoogleClient;
+use Google\Auth\Credentials\ServiceAccountCredentials;
 use GuzzleHttp\Client as HttpClient;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 
 class FcmClient
 {
-    private $googleClient;
+    private $credentialsPath;
+
     private $httpClient;
 
     public function __construct()
     {
-        $credentialsPath = $this->resolveCredentialsPath();
-        $this->googleClient = new GoogleClient();
-        $this->googleClient->setAuthConfig($credentialsPath);
-        $this->googleClient->addScope('https://fcm.googleapis.com/auth/firebase.messaging');
+        $this->credentialsPath = $this->resolveCredentialsPath();
         $this->httpClient = new HttpClient();
     }
 
@@ -58,25 +56,46 @@ class FcmClient
         );
     }
 
+    /**
+     * Resolve Firebase project ID for FCM API URL (from config or credentials file).
+     */
+    private function resolveProjectId(): string
+    {
+        $defaultProject = config('firebase.default', 'app');
+        $projectId = config("firebase.projects.{$defaultProject}.project_id");
+        if (!empty($projectId)) {
+            return $projectId;
+        }
+        $json = json_decode((string) file_get_contents($this->credentialsPath), true);
+        if (!empty($json['project_id'])) {
+            return $json['project_id'];
+        }
+        throw new \InvalidArgumentException('Firebase project_id not found in config (FIREBASE_PROJECT_ID) or credentials file.');
+    }
+
     public function sendMessage($token, $notification)
     {
-        // Fetch the OAuth 2.0 access token (or id_token when returned instead)
+        // Use OAuth2 scope (not audience) so we get access_token; id_token is not accepted by FCM
+        $credentials = new ServiceAccountCredentials(
+            'https://www.googleapis.com/auth/firebase.messaging',
+            $this->credentialsPath
+        );
         try {
-            $tokenResponse = $this->googleClient->fetchAccessTokenWithAssertion();
+            $tokenResponse = $credentials->fetchAuthToken();
             Logger::info('Access Token Response:', $tokenResponse);
-            $accessToken = $tokenResponse['access_token'] ?? $tokenResponse['id_token'] ?? null;
+            $accessToken = $tokenResponse['access_token'] ?? null;
             if (!$accessToken) {
                 $reason = isset($tokenResponse['error'])
                     ? ($tokenResponse['error'] . ': ' . ($tokenResponse['error_description'] ?? ''))
-                    : 'No access_token or id_token in response';
+                    : 'No access_token in response';
                 throw new ExpectedException('FIREBASE_ACCESS_TOKEN_NOT_FOUND', $reason);
             }
         } catch (\Exception $e) {
             Logger::error(null, $e);
             throw new ExpectedException('FIREBASE_ACCESS_TOKEN_NOT_FOUND', $e->getMessage());
         }
-        // Define the Firebase Cloud Messaging API v1 URL
-        $fcmUrl = 'https://fcm.googleapis.com/v1/projects/newflutterpushnotifications/messages:send';
+        $projectId = $this->resolveProjectId();
+        $fcmUrl = "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send";
         // Prepare the payload
         $payload = [
             'message' => [
