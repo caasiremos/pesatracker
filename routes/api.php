@@ -82,7 +82,7 @@ Route::prefix('customers')->middleware('auth:customers')->group(function () {
         Route::post('{customer}/wallet/transfer', 'walletTransfer');
     });
 
-    Route::post('/fcm-token', [CustomerController::class, 'updateFcmToken']);
+    Route::post('{customer}/fcm-token', [CustomerController::class, 'updateFcmToken']);
     Route::post('logout', [CustomerController::class, 'logout']);
 });
 
