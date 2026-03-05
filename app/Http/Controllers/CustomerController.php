@@ -13,7 +13,9 @@ use Throwable;
 
 class CustomerController extends Controller
 {
-    public function __construct(private CustomerService $customerService) {}
+    public function __construct(private CustomerService $customerService)
+    {
+    }
 
     public function index(Request $request)
     {
@@ -71,7 +73,7 @@ class CustomerController extends Controller
 
     /**
      * Send OTP to customer
-     * @param  Request  $request - params
+     * @param Request $request - params
      * @return ApiSuccessResponse|ApiErrorResponse
      */
     public function sendOtp(Request $request): ApiSuccessResponse|ApiErrorResponse
@@ -88,7 +90,7 @@ class CustomerController extends Controller
     /**
      * Verify OTP submitted
      *
-     * @param  Request  $request - params
+     * @param Request $request - params
      * @return ApiSuccessResponse|ApiErrorResponse
      */
     public function verifyOtp(Request $request): ApiSuccessResponse|ApiErrorResponse
@@ -102,5 +104,20 @@ class CustomerController extends Controller
         } catch (Throwable $throwable) {
             return new ApiErrorResponse($throwable->getMessage(), $throwable);
         }
+    }
+
+    public function updateFcmToken(Request $request)
+    {
+        $request->validate([
+            'fcm_token' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $member = auth('members')->user();
+        $member->update(['fcm_token' => $request->input('fcm_token')]);
+
+        return new ApiSuccessResponse(
+            ['fcm_token_registered' => (bool)$member->fcm_token],
+            'FCM token updated successfully'
+        );
     }
 }

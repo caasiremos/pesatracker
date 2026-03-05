@@ -9,6 +9,7 @@ use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Payment\AirtelMoneyGateWay;
 use App\Payment\MtnMomoGateWay;
+use App\Notifications\FcmNotification;
 use App\Payment\Relworx\MobileMoney;
 use App\Utils\Logger;
 use App\Utils\Money;
@@ -72,9 +73,17 @@ class WalletRepository
 
     public function initiateWalletDeposit(Request $request, Customer $customer)
     {
-        $walletTransactions = $this->initiateRelworxCollection($request, $customer);
+        // $walletTransactions = $this->initiateRelworxCollection($request, $customer);
 
-        return $walletTransactions;
+        if ($customer->fcm_token) {
+            $customer->notify(new FcmNotification([
+                'title' => 'Test notification',
+                'body' => 'This is a test push from PesaTracker.',
+                'data' => ['type' => 'test'],
+            ]));
+        }
+
+        // return $walletTransactions;
     }
 
     /**
