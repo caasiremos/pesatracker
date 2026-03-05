@@ -112,11 +112,11 @@ class CustomerController extends Controller
             'fcm_token' => ['nullable', 'string', 'max:500'],
         ]);
 
-        $member = auth('members')->user();
-        $member->update(['fcm_token' => $request->input('fcm_token')]);
+        $customer = auth('customers')->user();
+        $customer->update(['fcm_token' => $request->input('fcm_token')]);
 
         return new ApiSuccessResponse(
-            ['fcm_token_registered' => (bool)$member->fcm_token],
+            ['fcm_token_registered' => (bool)$customer->fcm_token],
             'FCM token updated successfully'
         );
     }
