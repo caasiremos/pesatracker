@@ -27,28 +27,28 @@ class WalletRepository
     {
         // Get source wallet (current customer)
         $sourceWallet = Wallet::query()->where('customer_id', $customer->id)->first();
-        
+
         // Get destination wallet using the wallet identifier from request
         $destinationWallet = Wallet::query()->where('wallet_identifier', $request->wallet_identifier)->first();
-        
+
         // Check if both wallets exist
         if (!$sourceWallet || !$destinationWallet) {
             throw new \Exception('Source or destination wallet not found');
         }
-        
+
         // Check if source wallet has sufficient balance
         if ($sourceWallet->balance < $request->amount) {
             throw new \Exception('Insufficient balance in source wallet');
         }
-        
+
         // Perform the transfer
         $sourceWallet->balance -= $request->amount;
         $destinationWallet->balance += $request->amount;
-        
+
         // Save both wallets
         $sourceWallet->save();
         $destinationWallet->save();
-        
+
         return [
             'source_wallet' => $sourceWallet,
             'destination_wallet' => $destinationWallet,
@@ -58,7 +58,7 @@ class WalletRepository
 
     /**
      * Get wallet details
-     * 
+     *
      * @param Customer $customer
      * @return Wallet
      */
@@ -79,7 +79,7 @@ class WalletRepository
 
     /**
      * Initiate telecom collection
-     * 
+     *
      * @param Request $request
      * @param Customer $customer
      * @return WalletTransaction
@@ -107,7 +107,7 @@ class WalletRepository
 
     /**
      * Get customer wallets
-     * 
+     *
      * @param Request $request
      * @return array
      */
@@ -137,7 +137,7 @@ class WalletRepository
 
     /**
      * Get wallet transactions
-     * 
+     *
      * @param Request $request
      * @return array
      */
@@ -206,7 +206,7 @@ class WalletRepository
 
     /**
      * Save transaction logs
-     * 
+     *
      * @param Request $request
      * @param string $transaction_id
      * @param Customer $customer
@@ -231,7 +231,7 @@ class WalletRepository
 
     /**
      * Mtn callback
-     * 
+     *
      * @param Request $request
      */
     public function mtnCallback(Request $request)
@@ -253,7 +253,7 @@ class WalletRepository
 
     /**
      * Airtel callback
-     * 
+     *
      * @param Request $request
      */
     public function airtelCallback(Request $request)
@@ -276,7 +276,7 @@ class WalletRepository
 
     /**
      * Update wallet balance
-     * 
+     *
      * @param TransactionLog $transactionLog
      */
     private function updateWalletBalance(TransactionLog $transactionLog)
@@ -288,7 +288,7 @@ class WalletRepository
 
     /**
      * Update transaction log
-     * 
+     *
      * @param TransactionLog $transaction_log
      * @return bool
      */
@@ -301,10 +301,11 @@ class WalletRepository
 
     /**
      * Initiate relworx collection
-     * 
+     *
      * @param Request $request
      * @param Customer $customer
      * @return WalletTransaction
+     * @throws ExpectedException
      */
     private function initiateRelworxCollection(Request $request, Customer $customer)
     {
@@ -332,7 +333,7 @@ class WalletRepository
 
     /**
      * Relworx collection callback
-     * 
+     *
      * @param Request $request
      */
     public function relworxCollectionCallback(Request $request)
@@ -347,7 +348,7 @@ class WalletRepository
                     $walletTransaction->save();
 
                     $wallet = Wallet::where('customer_id', $walletTransaction->customer_id)->first();
-                
+
                     if ($wallet) {
                         $wallet->balance += $request->amount;
                         $wallet->save();
@@ -372,7 +373,7 @@ class WalletRepository
 
     /**
      * Relworx disbursement callback
-     * 
+     *
      * @param Request $request
      */
     public function relworxDisbursementCallback(Request $request)
@@ -382,7 +383,7 @@ class WalletRepository
 
     /**
      * Relworx product callback
-     * 
+     *
      * @param Request $request
      */
     public function relworxProductCallback(Request $request)
