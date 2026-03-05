@@ -18,6 +18,7 @@ npm-debug.log
 yarn-error.log
 /auth.json
 /app/Firebase/firebase_credentials.json
+/storage/app/Firebase/firebase_credentials.json
 /.fleet
 /.idea
 /.nova

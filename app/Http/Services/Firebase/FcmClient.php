@@ -24,6 +24,7 @@ class FcmClient
 
     /**
      * Resolve Firebase credentials path from config (respects FIREBASE_CREDENTIALS and GOOGLE_APPLICATION_CREDENTIALS).
+     * Checks both project app/Firebase/ and storage/app/Firebase/ (capital F for Linux case-sensitivity).
      */
     private function resolveCredentialsPath(): string
     {
@@ -33,16 +34,28 @@ class FcmClient
             $credentials = $credentials['file'] ?? $credentials['path'] ?? 'app/Firebase/firebase_credentials.json';
         }
         $path = is_string($credentials) ? $credentials : 'app/Firebase/firebase_credentials.json';
-        // Absolute path (Unix or Windows)
-        if (! str_starts_with($path, '/') && (strlen($path) < 2 || $path[1] !== ':')) {
-            $path = base_path($path);
-        }
-        if (! is_file($path)) {
+        // Absolute path (Unix or Windows) from env
+        if (str_starts_with($path, '/') || (strlen($path) >= 2 && $path[1] === ':')) {
+            if (is_file($path)) {
+                return $path;
+            }
             throw new \InvalidArgumentException(
-                'Firebase credentials file not found: '.$path.'. Set FIREBASE_CREDENTIALS in .env to the path of your service account JSON, or place the file at app/Firebase/firebase_credentials.json.'
+                'Firebase credentials file not found: '.$path.'. Set FIREBASE_CREDENTIALS in .env to the correct path (use capital F in Firebase: storage/app/Firebase/).'
             );
         }
-        return $path;
+        // Relative path: try base_path first, then storage_path (canonical casing: Firebase)
+        $candidates = [
+            base_path($path),
+            storage_path('app/Firebase/firebase_credentials.json'),
+        ];
+        foreach ($candidates as $candidate) {
+            if (is_file($candidate)) {
+                return $candidate;
+            }
+        }
+        throw new \InvalidArgumentException(
+            'Firebase credentials file not found. Place firebase_credentials.json in app/Firebase/ or storage/app/Firebase/ (capital F), or set FIREBASE_CREDENTIALS in .env.'
+        );
     }
 
     public function sendMessage($token, $notification)
