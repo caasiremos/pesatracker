@@ -24,7 +24,7 @@ class FcmClient
         try {
             $tokenResponse = $this->googleClient->fetchAccessTokenWithAssertion();
             \Log::info('Access Token Response:', $tokenResponse);
-            $accessToken = $tokenResponse['access_token'] ?? null;
+            $accessToken = $tokenResponse['id_token'] ?? null;
             if (!$accessToken) {
                 \Log::error('Failed to retrieve access token', $tokenResponse);
                 throw new \Exception('Failed to retrieve access token');
