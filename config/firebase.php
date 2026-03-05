@@ -59,11 +59,11 @@ return [
              * If no credentials file can be found, an exception will be thrown the
              * first time you try to access a component of the Firebase Admin SDK.
              *
-             * Default path is app/Firebase/firebase_credentials.json (relative to project root).
+             * Default path is app/Firebase/firebase_credentials.txt (relative to project root).
              *
              */
 
-            'credentials' => env('FIREBASE_CREDENTIALS', env('GOOGLE_APPLICATION_CREDENTIALS', 'app/Firebase/firebase_credentials.json')),
+            'credentials' => env('FIREBASE_CREDENTIALS', env('GOOGLE_APPLICATION_CREDENTIALS', 'app/Firebase/firebase_credentials.txt')),
 
             /*
              * ------------------------------------------------------------------------

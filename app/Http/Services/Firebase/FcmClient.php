@@ -29,11 +29,11 @@ class FcmClient
     private function resolveCredentialsPath(): string
     {
         $defaultProject = config('firebase.default', 'app');
-        $credentials = config("firebase.projects.{$defaultProject}.credentials", 'app/Firebase/firebase_credentials.json');
+        $credentials = config("firebase.projects.{$defaultProject}.credentials", 'app/Firebase/firebase_credentials.txt');
         if (is_array($credentials)) {
-            $credentials = $credentials['file'] ?? $credentials['path'] ?? 'app/Firebase/firebase_credentials.json';
+            $credentials = $credentials['file'] ?? $credentials['path'] ?? 'app/Firebase/firebase_credentials.txt';
         }
-        $path = is_string($credentials) ? $credentials : 'app/Firebase/firebase_credentials.json';
+        $path = is_string($credentials) ? $credentials : 'app/Firebase/firebase_credentials.txt';
         // Absolute path (Unix or Windows) from env
         if (str_starts_with($path, '/') || (strlen($path) >= 2 && $path[1] === ':')) {
             if (is_file($path)) {
@@ -46,7 +46,7 @@ class FcmClient
         // Relative path: try base_path first, then storage_path (canonical casing: Firebase)
         $candidates = [
             base_path($path),
-            storage_path('app/Firebase/firebase_credentials.json'),
+            storage_path('app/Firebase/firebase_credentials.txt'),
         ];
         foreach ($candidates as $candidate) {
             if (is_file($candidate)) {
@@ -54,7 +54,7 @@ class FcmClient
             }
         }
         throw new \InvalidArgumentException(
-            'Firebase credentials file not found. Place firebase_credentials.json in app/Firebase/ or storage/app/Firebase/ (capital F), or set FIREBASE_CREDENTIALS in .env.'
+            'Firebase credentials file not found. Place firebase_credentials.txt in app/Firebase/ or storage/app/Firebase/ (capital F), or set FIREBASE_CREDENTIALS in .env.'
         );
     }
 

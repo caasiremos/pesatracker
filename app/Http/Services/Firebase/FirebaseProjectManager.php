@@ -30,7 +30,7 @@ class FirebaseProjectManager extends BaseFirebaseProjectManager
                 $credentials = $this->resolveJsonCredentials($credentials);
                 if (! str_starts_with($credentials, '{') && ! is_file($credentials)) {
                     throw new InvalidArgumentException(
-                        'Firebase credentials file not found: '.$credentials.'. Set FIREBASE_CREDENTIALS in .env to the path of your service account JSON (e.g. app/Firebase/firebase_credentials.json).'
+                        'Firebase credentials file not found: '.$credentials.'. Set FIREBASE_CREDENTIALS in .env to the path of your service account JSON (e.g. app/Firebase/firebase_credentials.txt).'
                     );
                 }
             }
@@ -38,7 +38,7 @@ class FirebaseProjectManager extends BaseFirebaseProjectManager
             $factory = $factory->withServiceAccount($credentials);
         } else {
             throw new InvalidArgumentException(
-                'Firebase credentials are required. Set FIREBASE_CREDENTIALS in .env to the path of your service account JSON (e.g. app/Firebase/firebase_credentials.json), or place the file at app/Firebase/firebase_credentials.json.'
+                'Firebase credentials are required. Set FIREBASE_CREDENTIALS in .env to the path of your service account JSON (e.g. app/Firebase/firebase_credentials.txt), or place the file at app/Firebase/firebase_credentials.txt.'
             );
         }
 
