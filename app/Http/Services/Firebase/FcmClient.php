@@ -1,101 +1,40 @@
 <?php
 namespace App\Http\Services\Firebase;
 
-use App\Exceptions\ExpectedException;
-use App\Utils\Logger;
-use Google\Auth\Credentials\ServiceAccountCredentials;
+
+use Google\Client as GoogleClient;
 use GuzzleHttp\Client as HttpClient;
-use Kreait\Firebase\Messaging\CloudMessage;
-use Kreait\Firebase\Messaging\Notification;
 
 class FcmClient
 {
-    private $credentialsPath;
-
+    private $googleClient;
     private $httpClient;
 
     public function __construct()
     {
-        $this->credentialsPath = $this->resolveCredentialsPath();
+        $this->googleClient = new GoogleClient();
+        $this->googleClient->setAuthConfig(storage_path('app/Firebase/firebase_credentials.json'));
+        $this->googleClient->addScope('https://fcm.googleapis.com/auth/firebase.messaging');
         $this->httpClient = new HttpClient();
-    }
-
-    /**
-     * Resolve Firebase credentials path from config (respects FIREBASE_CREDENTIALS and GOOGLE_APPLICATION_CREDENTIALS).
-     * Checks both project app/Firebase/ and storage/app/Firebase/ (capital F for Linux case-sensitivity).
-     */
-    private function resolveCredentialsPath(): string
-    {
-        $defaultProject = config('firebase.default', 'app');
-        $credentials = config("firebase.projects.{$defaultProject}.credentials", 'app/Firebase/firebase_credentials.txt');
-        if (is_array($credentials)) {
-            $credentials = $credentials['file'] ?? $credentials['path'] ?? 'app/Firebase/firebase_credentials.txt';
-        }
-        $path = is_string($credentials) ? $credentials : 'app/Firebase/firebase_credentials.txt';
-        // Absolute path (Unix or Windows) from env
-        if (str_starts_with($path, '/') || (strlen($path) >= 2 && $path[1] === ':')) {
-            if (is_file($path)) {
-                return $path;
-            }
-            throw new \InvalidArgumentException(
-                'Firebase credentials file not found: '.$path.'. Set FIREBASE_CREDENTIALS in .env to the correct path (use capital F in Firebase: storage/app/Firebase/).'
-            );
-        }
-        // Relative path: try base_path first, then storage_path (canonical casing: Firebase)
-        $candidates = [
-            base_path($path),
-            storage_path('app/Firebase/firebase_credentials.txt'),
-        ];
-        foreach ($candidates as $candidate) {
-            if (is_file($candidate)) {
-                return $candidate;
-            }
-        }
-        throw new \InvalidArgumentException(
-            'Firebase credentials file not found. Place firebase_credentials.txt in app/Firebase/ or storage/app/Firebase/ (capital F), or set FIREBASE_CREDENTIALS in .env.'
-        );
-    }
-
-    /**
-     * Resolve Firebase project ID for FCM API URL (from config or credentials file).
-     */
-    private function resolveProjectId(): string
-    {
-        $defaultProject = config('firebase.default', 'app');
-        $projectId = config("firebase.projects.{$defaultProject}.project_id");
-        if (!empty($projectId)) {
-            return $projectId;
-        }
-        $json = json_decode((string) file_get_contents($this->credentialsPath), true);
-        if (!empty($json['project_id'])) {
-            return $json['project_id'];
-        }
-        throw new \InvalidArgumentException('Firebase project_id not found in config (FIREBASE_PROJECT_ID) or credentials file.');
     }
 
     public function sendMessage($token, $notification)
     {
-        // Use OAuth2 scope (not audience) so we get access_token; id_token is not accepted by FCM
-        $credentials = new ServiceAccountCredentials(
-            'https://www.googleapis.com/auth/firebase.messaging',
-            $this->credentialsPath
-        );
+        // Fetch the OAuth 2.0 access token
         try {
-            $tokenResponse = $credentials->fetchAuthToken();
-            Logger::info('Access Token Response:', $tokenResponse);
+            $tokenResponse = $this->googleClient->fetchAccessTokenWithAssertion();
+            \Log::info('Access Token Response:', $tokenResponse);
             $accessToken = $tokenResponse['access_token'] ?? null;
             if (!$accessToken) {
-                $reason = isset($tokenResponse['error'])
-                    ? ($tokenResponse['error'] . ': ' . ($tokenResponse['error_description'] ?? ''))
-                    : 'No access_token in response';
-                throw new ExpectedException('FIREBASE_ACCESS_TOKEN_NOT_FOUND', $reason);
+                \Log::error('Failed to retrieve access token', $tokenResponse);
+                throw new \Exception('Failed to retrieve access token');
             }
         } catch (\Exception $e) {
-            Logger::error(null, $e);
-            throw new ExpectedException('FIREBASE_ACCESS_TOKEN_NOT_FOUND', $e->getMessage());
+            \Log::error('Error fetching access token: ' . $e->getMessage());
+            return ['error' => 'Could not fetch access token'];
         }
-        $projectId = $this->resolveProjectId();
-        $fcmUrl = "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send";
+        // Define the Firebase Cloud Messaging API v1 URL
+        $fcmUrl = 'https://fcm.googleapis.com/v1/projects/newflutterpushnotifications/messages:send';
         // Prepare the payload
         $payload = [
             'message' => [
@@ -139,3 +78,4 @@ class FcmClient
         return isset($response['name']) && is_string($response['name']);
     }
 }
+
