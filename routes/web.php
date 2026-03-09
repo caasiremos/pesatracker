@@ -19,6 +19,16 @@ Route::get('/privacy', function () {
     return Inertia::render('PrivacyPolicy');
 })->name('privacy');
 
+Route::get('/delete-customer-account', function () {
+    return Inertia::render('DeleteCustomerAccount');
+})->name('delete-customer-account');
+
+Route::post('/delete-customer-account', function (\Illuminate\Http\Request $request) {
+    $request->validate(['email' => ['required', 'email']]);
+    // TODO: implement account deletion (e.g. find customer by email, soft delete, send confirmation)
+    return back()->with('status', 'Account deletion request received. We will process it shortly.');
+})->name('delete-customer-account.submit');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
