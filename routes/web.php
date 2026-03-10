@@ -25,7 +25,6 @@ Route::get('/delete-customer-account', function () {
 
 Route::post('/delete-customer-account', function (\Illuminate\Http\Request $request) {
     $request->validate(['email' => ['required', 'email']]);
-    // TODO: implement account deletion (e.g. find customer by email, soft delete, send confirmation)
     return back()->with('status', 'Account deletion request received. We will process it shortly.');
 })->name('delete-customer-account.submit');
 
@@ -37,12 +36,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/wallet-transactions', [WalletController::class, 'walletWalletTransactions'])->name('wallets.transactions');
     Route::get('/scheduled-transactions', [ScheduledTransactionController::class, 'scheduledTransactions'])->name('scheduled.transactions');
     Route::get('/cash-transactions', [CashExpenseTransactionController::class, 'cashExpenseTransactions'])->name('cash.transactions');
-});
-
-
-Route::get('broadcast', function () {
-    $user = User::find(1)->first();
-    broadcast(new GameEvent($user));
 });
 
 require __DIR__ . '/settings.php';

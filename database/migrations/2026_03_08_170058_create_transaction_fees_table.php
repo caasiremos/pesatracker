@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('transaction_fees', function (Blueprint $table) {
             $table->id();
+            $table->string('provider');
+            $table->decimal('min_amount', 19, 4);
+            $table->decimal('max_amount', 19, 4);
+            $table->decimal('provider_fee', 19, 4);
+            $table->decimal('service_fee', 19, 4);
+            $table->string('transaction_type');
             $table->timestamps();
         });
     }

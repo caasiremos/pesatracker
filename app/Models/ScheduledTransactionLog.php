@@ -21,6 +21,10 @@ class ScheduledTransactionLog extends Model
         'scheduled_date',
         'internal_transaction_reference',
         'external_transaction_reference',
+        'telco_provider',
+        'provider_fee',
+        'external_status',
+        'error_message',
     ];
 
     public function scheduledTransaction()
